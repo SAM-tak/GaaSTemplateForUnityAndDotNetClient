@@ -1,7 +1,7 @@
-using System; // Unityで必要
+using System; // Unity needs this
 using MessagePack;
 
-namespace YourProjectName.Models // Unityでnamespace YourProjectName.Models; とはできないので
+namespace YourProjectName.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet
 {
     public enum PlayerStatus
     {
@@ -15,7 +15,8 @@ namespace YourProjectName.Models // Unityでnamespace YourProjectName.Models; �
     public record PlayerAccount
     {
         [Key(0)]
-        public long ID { get; set; }
+        public long ID { get; set; } // cannot use 'init', because MessagePack's generated static deserializer dosen't support it on Unity
+        // but all member must be as a property, ASP.NET Json serializer ignore member field even though public
         [Key(1)]
         public PlayerStatus Status { get; set; }
         [Key(2)]
@@ -29,5 +30,4 @@ namespace YourProjectName.Models // Unityでnamespace YourProjectName.Models; �
         [Key(6)]
         public DateTime? ExpireDate { get; set; }
     }
-
 }
