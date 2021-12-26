@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes: []
+  m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 2259e01de41a40340b9fa7fde17ecf28,
+      type: 2}
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000,
+      guid: c1a3542d3e7ba4d47a75e3738a536f23, type: 2}
+    com.unity.addressableassets: {fileID: 11400000, guid: 73cffe83dc9cb7a46af25a6eb570c11e,
+      type: 2}
+    com.unity.localization.settings: {fileID: 11400000, guid: 32f30b889810bae4d996460afe4d9ecb,
+      type: 2}
