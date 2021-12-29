@@ -10,7 +10,7 @@ public static class MessagePackInitializer
     public static void Initialize()
     {
         StaticCompositeResolver.Instance.Register(
-//            GeneratedResolver.Instance,
+            GeneratedResolver.Instance,
             UnityResolver.Instance,
             UnityBlitWithPrimitiveArrayResolver.Instance,
             StandardResolver.Instance
