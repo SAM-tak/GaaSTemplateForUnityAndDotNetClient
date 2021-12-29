@@ -51,8 +51,8 @@ namespace MessagePack.Resolvers
         {
             lookup = new global::System.Collections.Generic.Dictionary<Type, int>(2)
             {
-                { typeof(global::YourProjectName.Models.PlayerStatus), 0 },
-                { typeof(global::YourProjectName.Models.PlayerAccount), 1 },
+                { typeof(global::YourGameServer.Models.PlayerStatus), 0 },
+                { typeof(global::YourGameServer.Models.PlayerAccount), 1 },
             };
         }
 
@@ -66,8 +66,8 @@ namespace MessagePack.Resolvers
 
             switch (key)
             {
-                case 0: return new MessagePack.Formatters.YourProjectName.Models.PlayerStatusFormatter();
-                case 1: return new MessagePack.Formatters.YourProjectName.Models.PlayerAccountFormatter();
+                case 0: return new MessagePack.Formatters.YourGameServer.Models.PlayerStatusFormatter();
+                case 1: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccountFormatter();
                 default: return null;
             }
         }
@@ -97,22 +97,22 @@ namespace MessagePack.Resolvers
 #pragma warning disable SA1403 // File may only contain a single namespace
 #pragma warning disable SA1649 // File name should match first type name
 
-namespace MessagePack.Formatters.YourProjectName.Models
+namespace MessagePack.Formatters.YourGameServer.Models
 {
     using System;
     using System.Buffers;
     using MessagePack;
 
-    public sealed class PlayerStatusFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourProjectName.Models.PlayerStatus>
+    public sealed class PlayerStatusFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.PlayerStatus>
     {
-        public void Serialize(ref MessagePackWriter writer, global::YourProjectName.Models.PlayerStatus value, global::MessagePack.MessagePackSerializerOptions options)
+        public void Serialize(ref MessagePackWriter writer, global::YourGameServer.Models.PlayerStatus value, global::MessagePack.MessagePackSerializerOptions options)
         {
             writer.Write((Int32)value);
         }
 
-        public global::YourProjectName.Models.PlayerStatus Deserialize(ref MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
+        public global::YourGameServer.Models.PlayerStatus Deserialize(ref MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
         {
-            return (global::YourProjectName.Models.PlayerStatus)reader.ReadInt32();
+            return (global::YourGameServer.Models.PlayerStatus)reader.ReadInt32();
         }
     }
 }
@@ -125,6 +125,11 @@ namespace MessagePack.Formatters.YourProjectName.Models
 #pragma warning restore SA1200 // Using directives should be placed correctly
 #pragma warning restore SA1403 // File may only contain a single namespace
 #pragma warning restore SA1649 // File name should match first type name
+
+
+
+
+
 
 
 
@@ -144,80 +149,178 @@ namespace MessagePack.Formatters.YourProjectName.Models
 #pragma warning disable SA1403 // File may only contain a single namespace
 #pragma warning disable SA1649 // File name should match first type name
 
-namespace MessagePack.Formatters.YourProjectName.Models
+namespace MessagePack.Formatters.YourGameServer.Models
 {
     using global::System.Buffers;
     using global::MessagePack;
 
-    public sealed class PlayerAccountFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourProjectName.Models.PlayerAccount>
+
+    public sealed class PlayerAccountFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.PlayerAccount>
+
     {
 
-        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourProjectName.Models.PlayerAccount value, global::MessagePack.MessagePackSerializerOptions options)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Models.PlayerAccount value, global::MessagePack.MessagePackSerializerOptions options)
         {
+
             if (value == null)
             {
                 writer.WriteNil();
                 return;
             }
 
+
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+
             writer.WriteArrayHeader(7);
+
             writer.Write(value.ID);
-            formatterResolver.GetFormatterWithVerify<global::YourProjectName.Models.PlayerStatus>().Serialize(ref writer, value.Status, options);
+
+
+            formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.PlayerStatus>().Serialize(ref writer, value.Status, options);
+
+
             formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Serialize(ref writer, value.Since, options);
+
+
             formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Serialize(ref writer, value.LastLogin, options);
+
+
             formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Serialize(ref writer, value.InactivateDate, options);
+
+
             formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Serialize(ref writer, value.BanDate, options);
+
+
             formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Serialize(ref writer, value.ExpireDate, options);
+
+
         }
 
-        public global::YourProjectName.Models.PlayerAccount Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
+        public global::YourGameServer.Models.PlayerAccount Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
         {
             if (reader.TryReadNil())
             {
+
                 return null;
+
             }
 
+
             options.Security.DepthStep(ref reader);
+
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+
             var length = reader.ReadArrayHeader();
-            var ____result = new global::YourProjectName.Models.PlayerAccount();
+
+            var __ID__ = default(long);
+
+            var __Status__ = default(global::YourGameServer.Models.PlayerStatus);
+
+            var __Since__ = default(global::System.DateTime);
+
+            var __LastLogin__ = default(global::System.DateTime);
+
+            var __InactivateDate__ = default(global::System.DateTime?);
+
+            var __BanDate__ = default(global::System.DateTime?);
+
+            var __ExpireDate__ = default(global::System.DateTime?);
+
+
 
             for (int i = 0; i < length; i++)
             {
                 switch (i)
                 {
+
                     case 0:
-                        ____result.ID = reader.ReadInt64();
+
+                        __ID__ = reader.ReadInt64();
+
                         break;
+
                     case 1:
-                        ____result.Status = formatterResolver.GetFormatterWithVerify<global::YourProjectName.Models.PlayerStatus>().Deserialize(ref reader, options);
+
+                        __Status__ = formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.PlayerStatus>().Deserialize(ref reader, options);
+
                         break;
+
                     case 2:
-                        ____result.Since = formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Deserialize(ref reader, options);
+
+                        __Since__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Deserialize(ref reader, options);
+
                         break;
+
                     case 3:
-                        ____result.LastLogin = formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Deserialize(ref reader, options);
+
+                        __LastLogin__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Deserialize(ref reader, options);
+
                         break;
+
                     case 4:
-                        ____result.InactivateDate = formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Deserialize(ref reader, options);
+
+                        __InactivateDate__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Deserialize(ref reader, options);
+
                         break;
+
                     case 5:
-                        ____result.BanDate = formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Deserialize(ref reader, options);
+
+                        __BanDate__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Deserialize(ref reader, options);
+
                         break;
+
                     case 6:
-                        ____result.ExpireDate = formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Deserialize(ref reader, options);
+
+                        __ExpireDate__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Deserialize(ref reader, options);
+
                         break;
+
                     default:
                         reader.Skip();
                         break;
                 }
             }
 
+
+            var ____result = new global::YourGameServer.Models.PlayerAccount() {
+
+                ID = __ID__,
+
+                Status = __Status__,
+
+                Since = __Since__,
+
+                LastLogin = __LastLogin__,
+
+                InactivateDate = __InactivateDate__,
+
+                BanDate = __BanDate__,
+
+                ExpireDate = __ExpireDate__,
+
+            };
+
             reader.Depth--;
             return ____result;
+
         }
     }
+
 }
 
 #pragma warning restore 168

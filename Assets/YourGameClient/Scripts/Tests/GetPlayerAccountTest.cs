@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace YourProjectName
+namespace YourGameClient
 {
     public class GetPlayerAccountTest : MonoBehaviour
     {

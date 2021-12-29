@@ -5,8 +5,9 @@ using UnityEngine.Networking;
 using Cysharp.Threading.Tasks;
 using CustomUnity;
 using MessagePack;
+using YourGameServer.Models;
 
-namespace YourProjectName
+namespace YourGameClient
 {
     public static class Request
     {
@@ -30,7 +31,7 @@ namespace YourProjectName
             };
         }
 
-        public static async UniTask<Models.PlayerAccount> GetPlayerAccount(int index)
+        public static async UniTask<PlayerAccount> GetPlayerAccount(int index)
         {
             using(var request = UnityWebRequest.Get($"{apiUrl}PlayerAccount/{index}")) {
                 request.SetRequestHeader("Accept", CurrentAccept.ToHeaderString());
@@ -38,11 +39,11 @@ namespace YourProjectName
                 if(request.error == null) {
                     //Log.Info($"Content-Type : {request.GetResponseHeader("Content-Type")}");
                     if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                        return MessagePackSerializer.Deserialize<Models.PlayerAccount>(request.downloadHandler.data);
+                        return MessagePackSerializer.Deserialize<PlayerAccount>(request.downloadHandler.data);
                     }
                     else {
                         //Log.Info($"source json : {request.downloadHandler.text}");
-                        return Newtonsoft.Json.JsonConvert.DeserializeObject<Models.PlayerAccount>(request.downloadHandler.text);
+                        return Newtonsoft.Json.JsonConvert.DeserializeObject<PlayerAccount>(request.downloadHandler.text);
                     }
                 }
                 else {

@@ -1,28 +1,14 @@
 using System.Diagnostics;
 using CustomUnity;
 
-namespace YourProjectName
+namespace YourGameClient
 {
-    public class MonoBehaviour : CustomUnity.MonoBehaviour
+    public abstract class StateMachineBehaviour : CustomUnity.StateMachineBehaviour
     {
-        /// <summary>
-        /// イベント関数用
-        /// </summary>
-        /// <param name="message"></param>
-        public void DebugLog(string message)
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        protected void DebugBreak()
         {
-            LogInfo(message);
-        }
-
-        /// <summary>
-        /// イベント関数用
-        /// </summary>
-        public void DebugBreak()
-        {
-#if(UNITY_EDITOR || DEVELOPMENT_BUILD)
-            UnityEngine.Debug.Log("DebugBreak", this);
             UnityEngine.Debug.Break();
-#endif
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
