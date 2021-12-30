@@ -12,7 +12,7 @@ namespace YourGameClient
     public static class Request
     {
         const string serverUrl = "https://localhost:7142";
-        const string apiUrl = serverUrl + "/api/";
+        const string apiRootUrl = serverUrl + "/api/";
 
         public static ContentType CurrentAccept = ContentType.MessagePack;
 
@@ -33,7 +33,7 @@ namespace YourGameClient
 
         public static async UniTask<PlayerAccount> GetPlayerAccount(int index)
         {
-            using(var request = UnityWebRequest.Get($"{apiUrl}PlayerAccount/{index}")) {
+            using(var request = UnityWebRequest.Get($"{apiRootUrl}PlayerAccount/{index}")) {
                 request.SetRequestHeader("Accept", CurrentAccept.ToHeaderString());
                 await request.SendWebRequest();
                 if(request.error == null) {
