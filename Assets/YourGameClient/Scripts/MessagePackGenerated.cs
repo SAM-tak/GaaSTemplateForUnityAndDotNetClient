@@ -49,7 +49,7 @@ namespace MessagePack.Resolvers
 
         static GeneratedResolverGetFormatterHelper()
         {
-            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(9)
+            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(10)
             {
                 { typeof(global::YourGameServer.Models.DeviceType), 0 },
                 { typeof(global::YourGameServer.Models.PlayerAccountStatus), 1 },
@@ -57,9 +57,10 @@ namespace MessagePack.Resolvers
                 { typeof(global::YourGameServer.Models.AccountCreationResult), 3 },
                 { typeof(global::YourGameServer.Models.LUID), 4 },
                 { typeof(global::YourGameServer.Models.PlayerAccount), 5 },
-                { typeof(global::YourGameServer.Models.PlayerDevice), 6 },
-                { typeof(global::YourGameServer.Models.PlayerProfile), 7 },
-                { typeof(global::YourGameServer.Models.TokenRequest), 8 },
+                { typeof(global::YourGameServer.Models.PlayerAccount.Masked), 6 },
+                { typeof(global::YourGameServer.Models.PlayerDevice), 7 },
+                { typeof(global::YourGameServer.Models.PlayerProfile), 8 },
+                { typeof(global::YourGameServer.Models.TokenRequest), 9 },
             };
         }
 
@@ -74,14 +75,15 @@ namespace MessagePack.Resolvers
             switch (key)
             {
                 case 0: return new MessagePack.Formatters.YourGameServer.Models.DeviceTypeFormatter();
-                case 1: return new MessagePack.Formatters.YourGameServer.Models.PlayerStatusFormatter();
+                case 1: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccountStatusFormatter();
                 case 2: return new MessagePack.Formatters.YourGameServer.Models.AccountCreationRequestFormatter();
                 case 3: return new MessagePack.Formatters.YourGameServer.Models.AccountCreationResultFormatter();
                 case 4: return new MessagePack.Formatters.YourGameServer.Models.LUIDFormatter();
                 case 5: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccountFormatter();
-                case 6: return new MessagePack.Formatters.YourGameServer.Models.PlayerDeviceFormatter();
-                case 7: return new MessagePack.Formatters.YourGameServer.Models.PlayerProfileFormatter();
-                case 8: return new MessagePack.Formatters.YourGameServer.Models.TokenRequestFormatter();
+                case 6: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccount_MaskedFormatter();
+                case 7: return new MessagePack.Formatters.YourGameServer.Models.PlayerDeviceFormatter();
+                case 8: return new MessagePack.Formatters.YourGameServer.Models.PlayerProfileFormatter();
+                case 9: return new MessagePack.Formatters.YourGameServer.Models.TokenRequestFormatter();
                 default: return null;
             }
         }
@@ -130,7 +132,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
         }
     }
 
-    public sealed class PlayerStatusFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.PlayerAccountStatus>
+    public sealed class PlayerAccountStatusFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.PlayerAccountStatus>
     {
         public void Serialize(ref MessagePackWriter writer, global::YourGameServer.Models.PlayerAccountStatus value, global::MessagePack.MessagePackSerializerOptions options)
         {
@@ -336,7 +338,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
             }
 
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
-            writer.WriteArrayHeader(11);
+            writer.WriteArrayHeader(10);
             writer.Write(value.Id);
             formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.Luid, options);
             writer.WriteNil();
@@ -347,7 +349,6 @@ namespace MessagePack.Formatters.YourGameServer.Models
             formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Serialize(ref writer, value.InactivateDate, options);
             formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Serialize(ref writer, value.BanDate, options);
             formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Serialize(ref writer, value.ExpireDate, options);
-            writer.Write(value.ProfileId);
         }
 
         public global::YourGameServer.Models.PlayerAccount Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
@@ -368,7 +369,6 @@ namespace MessagePack.Formatters.YourGameServer.Models
             var __InactivateDate__ = default(global::System.DateTime?);
             var __BanDate__ = default(global::System.DateTime?);
             var __ExpireDate__ = default(global::System.DateTime?);
-            var __ProfileId__ = default(long);
 
             for (int i = 0; i < length; i++)
             {
@@ -398,9 +398,6 @@ namespace MessagePack.Formatters.YourGameServer.Models
                     case 9:
                         __ExpireDate__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Deserialize(ref reader, options);
                         break;
-                    case 10:
-                        __ProfileId__ = reader.ReadInt64();
-                        break;
                     default:
                         reader.Skip();
                         break;
@@ -416,7 +413,72 @@ namespace MessagePack.Formatters.YourGameServer.Models
                 InactivateDate = __InactivateDate__,
                 BanDate = __BanDate__,
                 ExpireDate = __ExpireDate__,
-                ProfileId = __ProfileId__,
+            };
+            reader.Depth--;
+            return ____result;
+        }
+    }
+    public sealed class PlayerAccount_MaskedFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.PlayerAccount.Masked>
+    {
+
+        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Models.PlayerAccount.Masked value, global::MessagePack.MessagePackSerializerOptions options)
+        {
+            if (value == null)
+            {
+                writer.WriteNil();
+                return;
+            }
+
+            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+            writer.WriteArrayHeader(4);
+            writer.Write(value.Id);
+            formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.PlayerAccountStatus>().Serialize(ref writer, value.Status, options);
+            formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Serialize(ref writer, value.Since, options);
+            formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Serialize(ref writer, value.LastLogin, options);
+        }
+
+        public global::YourGameServer.Models.PlayerAccount.Masked Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
+        {
+            if (reader.TryReadNil())
+            {
+                return null;
+            }
+
+            options.Security.DepthStep(ref reader);
+            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+            var length = reader.ReadArrayHeader();
+            var __Id__ = default(long);
+            var __Status__ = default(global::YourGameServer.Models.PlayerAccountStatus);
+            var __Since__ = default(global::System.DateTime);
+            var __LastLogin__ = default(global::System.DateTime);
+
+            for (int i = 0; i < length; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        __Id__ = reader.ReadInt64();
+                        break;
+                    case 1:
+                        __Status__ = formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.PlayerAccountStatus>().Deserialize(ref reader, options);
+                        break;
+                    case 2:
+                        __Since__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Deserialize(ref reader, options);
+                        break;
+                    case 3:
+                        __LastLogin__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Deserialize(ref reader, options);
+                        break;
+                    default:
+                        reader.Skip();
+                        break;
+                }
+            }
+
+            var ____result = new global::YourGameServer.Models.PlayerAccount.Masked() {
+                Id = __Id__,
+                Status = __Status__,
+                Since = __Since__,
+                LastLogin = __LastLogin__,
             };
             reader.Depth--;
             return ____result;

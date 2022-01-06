@@ -66,7 +66,7 @@ namespace YourGameClient
             return null;
         }
 
-        public static async UniTask<IEnumerable<PlayerAccount>> GetPlayerAccounts(long[] ids)
+        public static async UniTask<IEnumerable<PlayerAccount.Masked>> GetPlayerAccounts(long[] ids)
         {
             using(var request = UnityWebRequest.Get($"{apiRootUrl}/{CurrentPlayerId}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}")) {
                 request.SetRequestHeader("Accept", CurrentAccept.ToHeaderString());
@@ -77,11 +77,11 @@ namespace YourGameClient
                 if(request.error == null) {
                     Log.Info($"Content-Type : {request.GetResponseHeader("Content-Type")}");
                     if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                        return MessagePackSerializer.Deserialize<IEnumerable<PlayerAccount>>(request.downloadHandler.data);
+                        return MessagePackSerializer.Deserialize<IEnumerable<PlayerAccount.Masked>>(request.downloadHandler.data);
                     }
                     else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
                         Log.Info($"source json : {request.downloadHandler.text}");
-                        return Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<PlayerAccount>>(request.downloadHandler.text);
+                        return Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<PlayerAccount.Masked>>(request.downloadHandler.text);
                     }
                     else {
                         Log.Error($"GetPlayerAccount : Unknown Format");

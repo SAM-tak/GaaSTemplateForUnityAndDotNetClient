@@ -45,9 +45,34 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         public DateTime? BanDate { get; set; }
         [Key(9)]
         public DateTime? ExpireDate { get; set; }
-        [Key(10)]
-        public long ProfileId { get; init; }
         [IgnoreMember]
         public PlayerProfile Profile { get; init; }
+
+        public Masked MakeMasked()
+        {
+            return new Masked {
+                Id = Id,
+                Status = Status,
+                Since = Since,
+                LastLogin = LastLogin,
+                Profile = Profile
+            };
+        }
+
+        [NotMapped]
+        [MessagePackObject]
+        public record Masked
+        {
+            [Key(0)]
+            public long Id { get; init; }
+            [Key(1)]
+            public PlayerAccountStatus Status { get; set; }
+            [Key(2)]
+            public DateTime Since { get; init; }
+            [Key(3)]
+            public DateTime LastLogin { get; set; }
+            [IgnoreMember]
+            public PlayerProfile Profile { get; init; }
+        }
     }
 }
