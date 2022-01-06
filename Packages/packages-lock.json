@@ -8,11 +8,11 @@
       "hash": "72e620d169841f32bc6110ad0e12ee9eae6f1aaf"
     },
     "com.neuecc.messagepack": {
-      "version": "https://github.com/neuecc/MessagePack-CSharp.git?path=src/MessagePack.UnityClient/Assets/Scripts/MessagePack#v2.3.85",
+      "version": "https://github.com/SAM-tak/MessagePack-CSharp.git?path=src/MessagePack.UnityClient/Assets/Scripts/MessagePack#v2.3.86",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b6761136762ac4215d9d5c077f7d11e733ec38b8"
+      "hash": "021c13bffbfe81a978961a97481f5271286a123c"
     },
     "com.unity.adaptiveperformance": {
       "version": "3.0.0",
@@ -66,7 +66,7 @@
       }
     },
     "com.unity.ide.rider": {
-      "version": "3.0.7",
+      "version": "3.0.9",
       "depth": 0,
       "source": "registry",
       "dependencies": {
