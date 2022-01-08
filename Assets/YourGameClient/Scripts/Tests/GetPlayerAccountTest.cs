@@ -6,6 +6,7 @@ namespace YourGameClient
 {
     public class GetPlayerAccountTest : MonoBehaviour
     {
+        public Request.ContentType accept;
         public Request.ContentType contentType;
 
         public long[] ids = new[] { 1L, 2L, 3L, 4L, 5L };
@@ -19,7 +20,8 @@ namespace YourGameClient
                 await Request.NewAccount();
             }
 
-            Request.CurrentAccept = contentType;
+            Request.CurrentAcceptContentType = accept;
+            Request.CurrentRequestContentType = contentType;
             var playerAccount = await Request.GetPlayerAccount();
             LogInfo($"playerAccount : {playerAccount} {playerAccount?.Id} {playerAccount?.Since}");
 

@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using Cysharp.Threading.Tasks;
-using CustomUnity;
 using MessagePack;
+using CustomUnity;
 using YourGameServer.Models;
 
 namespace YourGameClient
@@ -18,8 +17,10 @@ namespace YourGameClient
         public const string prefPlayerIdKey = prefPrefix + "playerid";
         public const string prefLastDeviceIdKey = prefPrefix + "lastdeviceid";
 
-        public static ContentType CurrentAccept = ContentType.MessagePack;
+        public static ContentType CurrentAcceptContentType = ContentType.MessagePack;
+        public static ContentType CurrentRequestContentType = ContentType.MessagePack;
         public static long CurrentPlayerId = 0;
+        public static long CurrentDeviceId = 0;
         public static string CurrentSecurityToken;
 
         public enum ContentType
@@ -37,60 +38,66 @@ namespace YourGameClient
             };
         }
 
+        internal static UnityWebRequest NewPostRequest<T>(string uri, T content)
+        {
+            if(CurrentRequestContentType == ContentType.MessagePack) return WebRequest.Post(uri, MessagePackSerializer.Serialize(content), "application/x-msgpack");
+            return WebRequest.PostJson(uri, Newtonsoft.Json.JsonConvert.SerializeObject(content));
+        }
+
         public static async UniTask<PlayerAccount> GetPlayerAccount()
         {
-            using(var request = UnityWebRequest.Get($"{apiRootUrl}/{CurrentPlayerId}/PlayerAccounts/self")) {
-                request.SetRequestHeader("Accept", CurrentAccept.ToHeaderString());
-                request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
-                Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
+            using var request = UnityWebRequest.Get($"{apiRootUrl}/{CurrentPlayerId}/PlayerAccounts/self");
+            request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
+            request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
+            request.SetRequestHeader("DeviceId", CurrentDeviceId.ToString());
+            Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
 
-                await request.SendWebRequest();
-                if(request.error == null) {
-                    Log.Info($"Content-Type : {request.GetResponseHeader("Content-Type")}");
-                    if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                        return MessagePackSerializer.Deserialize<PlayerAccount>(request.downloadHandler.data);
-                    }
-                    else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
-                        Log.Info($"source json : {request.downloadHandler.text}");
-                        return Newtonsoft.Json.JsonConvert.DeserializeObject<PlayerAccount>(request.downloadHandler.text);
-                    }
-                    else {
-                        Log.Error($"GetPlayerAccount : Unknown Format");
-                        return null;
-                    }
+            await request.SendWebRequest();
+            if(request.error == null) {
+                Log.Info($"Content-Type : {request.GetResponseHeader("Content-Type")}");
+                if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
+                    return MessagePackSerializer.Deserialize<PlayerAccount>(request.downloadHandler.data);
+                }
+                else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
+                    Log.Info($"source json : {request.downloadHandler.text}");
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<PlayerAccount>(request.downloadHandler.text);
                 }
                 else {
-                    Log.Error($"GetPlayerAccount : {request.error}");
+                    Log.Error($"GetPlayerAccount : Unknown Format");
+                    return null;
                 }
+            }
+            else {
+                Log.Error($"GetPlayerAccount : {request.error}");
             }
             return null;
         }
 
         public static async UniTask<IEnumerable<PlayerAccount.Masked>> GetPlayerAccounts(long[] ids)
         {
-            using(var request = UnityWebRequest.Get($"{apiRootUrl}/{CurrentPlayerId}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}")) {
-                request.SetRequestHeader("Accept", CurrentAccept.ToHeaderString());
-                request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
-                Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
+            using var request = UnityWebRequest.Get($"{apiRootUrl}/{CurrentPlayerId}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}");
+            request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
+            request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
+            request.SetRequestHeader("DeviceId", CurrentDeviceId.ToString());
+            Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
 
-                await request.SendWebRequest();
-                if(request.error == null) {
-                    Log.Info($"Content-Type : {request.GetResponseHeader("Content-Type")}");
-                    if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                        return MessagePackSerializer.Deserialize<IEnumerable<PlayerAccount.Masked>>(request.downloadHandler.data);
-                    }
-                    else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
-                        Log.Info($"source json : {request.downloadHandler.text}");
-                        return Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<PlayerAccount.Masked>>(request.downloadHandler.text);
-                    }
-                    else {
-                        Log.Error($"GetPlayerAccount : Unknown Format");
-                        return null;
-                    }
+            await request.SendWebRequest();
+            if(request.error == null) {
+                Log.Info($"Content-Type : {request.GetResponseHeader("Content-Type")}");
+                if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
+                    return MessagePackSerializer.Deserialize<IEnumerable<PlayerAccount.Masked>>(request.downloadHandler.data);
+                }
+                else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
+                    Log.Info($"source json : {request.downloadHandler.text}");
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<PlayerAccount.Masked>>(request.downloadHandler.text);
                 }
                 else {
-                    Log.Error($"GetPlayerAccount : {request.error}");
+                    Log.Error($"GetPlayerAccount : Unknown Format");
+                    return null;
                 }
+            }
+            else {
+                Log.Error($"GetPlayerAccount : {request.error}");
             }
             return null;
         }
@@ -103,7 +110,7 @@ namespace YourGameClient
             var deviceId = PlayerPrefs.GetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
             var newDeviceId = SystemInfo.deviceUniqueIdentifier != deviceId ? SystemInfo.deviceUniqueIdentifier : null;
 
-            var payload = MessagePackSerializer.Serialize(new TokenRequest {
+            using var request = NewPostRequest($"{apiRootUrl}/token", new TokenRequest {
                 Id = PlayerId,
 #if UNITY_IOS
                 DeviceType = YourGameServer.Models.DeviceType.IOS,
@@ -117,24 +124,27 @@ namespace YourGameClient
                 DeviceId = deviceId,
                 NewDeviceId = newDeviceId
             });
-            //var form = new WWWForm();
-            //form.AddBinaryData("login", payload, null, "application/x-msgpack");
-            using var request = Post($"{apiRootUrl}/token", payload);
-            request.SetRequestHeader("Accept", CurrentAccept.ToHeaderString());
+            request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
             await request.SendWebRequest();
             if(request.error == null) {
                 Log.Info($"LogIn : Content-Type : {request.GetResponseHeader("Content-Type")}");
                 if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                    CurrentSecurityToken = MessagePackSerializer.Deserialize<string>(request.downloadHandler.data);
+                    var ret = MessagePackSerializer.Deserialize<TokenRequestResult>(request.downloadHandler.data);
+                    CurrentPlayerId = PlayerId;
+                    CurrentDeviceId = ret.DeviceId;
+                    CurrentSecurityToken = ret.Token;
                 }
                 else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
                     Log.Info($"source json : {request.downloadHandler.text}");
-                    CurrentSecurityToken = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(request.downloadHandler.text);
+                    var ret = Newtonsoft.Json.JsonConvert.DeserializeObject<TokenRequestResult>(request.downloadHandler.text);
+                    CurrentPlayerId = PlayerId;
+                    CurrentDeviceId = ret.DeviceId;
+                    CurrentSecurityToken = ret.Token;
                 }
                 else if(request.GetResponseHeader("Content-Type").Contains("text/plain")) {
-                    CurrentSecurityToken = request.downloadHandler.text;
+                    Log.Error($"LogIn : Unknown Format");
+                    return request.result;
                 }
-                CurrentPlayerId = PlayerId;
                 if(newDeviceId != null) {
                     PlayerPrefs.SetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
                     PlayerPrefs.Save();
@@ -146,25 +156,9 @@ namespace YourGameClient
             return request.result;
         }
 
-        internal static UnityWebRequest Post(string uri, string json)
-        {
-            return new UnityWebRequest(uri, UnityWebRequest.kHttpVerbPOST) {
-                uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json)) { contentType = "application/json" },
-                downloadHandler = new DownloadHandlerBuffer()
-            };
-        }
-
-        internal static UnityWebRequest Post(string uri, byte[] msgpack)
-        {
-            return new UnityWebRequest(uri, UnityWebRequest.kHttpVerbPOST) {
-                uploadHandler = new UploadHandlerRaw(msgpack) { contentType = "application/x-msgpack" },
-                downloadHandler = new DownloadHandlerBuffer()
-            };
-        }
-
         public static async UniTask<UnityWebRequest.Result> NewAccount()
         {
-            var payload = MessagePackSerializer.Serialize(new AccountCreationRequest {
+            using var request = NewPostRequest($"{apiRootUrl}/signin", new AccountCreationRequest {
 #if UNITY_IOS
                 DeviceType = YourGameServer.Models.DeviceType.IOS,
 #elif UNITY_ANDROID
@@ -176,9 +170,7 @@ namespace YourGameClient
 #endif
                 DeviceId = SystemInfo.deviceUniqueIdentifier
             });
-
-            using var request = Post($"{apiRootUrl}/signin", payload);
-            request.SetRequestHeader("Accept", CurrentAccept.ToHeaderString());
+            request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
             await request.SendWebRequest();
             if(request.error == null) {
                 AccountCreationResult ret;
@@ -191,6 +183,7 @@ namespace YourGameClient
                     ret = Newtonsoft.Json.JsonConvert.DeserializeObject<AccountCreationResult>(request.downloadHandler.text);
                 }
                 CurrentPlayerId = ret.Id;
+                CurrentDeviceId = ret.DeviceId;
                 CurrentSecurityToken = ret.Token;
                 PlayerPrefs.SetString(prefPlayerIdKey, ret.Id.ToString());
                 PlayerPrefs.SetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);

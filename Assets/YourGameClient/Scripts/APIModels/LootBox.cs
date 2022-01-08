@@ -1,0 +1,26 @@
+using System; // Unity needs this
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using MessagePack;
+
+namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet
+{
+    [MessagePackObject]
+    public record LootBox
+    {
+        [Key(0)]
+        public long Id { get; set; }
+        [Key(1)]
+        public string Name { get; set; }
+        [Key(2)]
+        public string ProductName { get; set; }
+        [Key(3)]
+        public string DisplayName { get; set; }
+        [Key(4)]
+        public string Description { get; set; }
+        [Key(5)]
+        public string IconAddress { get; init; }
+        [Key(6)]
+        public string BannerAddress { get; init; }
+    }
+}

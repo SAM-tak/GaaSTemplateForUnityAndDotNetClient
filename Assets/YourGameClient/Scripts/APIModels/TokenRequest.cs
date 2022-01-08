@@ -16,4 +16,14 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [Key(3)]
         public string NewDeviceId { get; init; } // Unity's SystemInfo.deviceUniqueIdentifier
     }
+
+    [NotMapped]
+    [MessagePackObject]
+    public record TokenRequestResult
+    {
+        [Key(0)]
+        public long DeviceId { get; init; } // PlayerDevice Table index
+        [Key(1)]
+        public string Token { get; init; }
+    }
 }

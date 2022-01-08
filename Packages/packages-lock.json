@@ -221,11 +221,11 @@
       "url": "https://packages.unity.com"
     },
     "net.sam-tak.customunity": {
-      "version": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.2",
+      "version": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.3",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "9d733ca66d982fd0442a3e688d13ca841811397a"
+      "hash": "bf3564340356130c1ef32dd4d87e665aa1a85813"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

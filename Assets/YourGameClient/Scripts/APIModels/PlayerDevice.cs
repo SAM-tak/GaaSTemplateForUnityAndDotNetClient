@@ -2,6 +2,11 @@ using System; // Unity needs this
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+#if UNITY_5_3_OR_NEWER
+using Newtonsoft.Json;
+#else
+using System.Text.Json.Serialization;
+#endif
 using MessagePack;
 
 namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet
@@ -26,6 +31,7 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [Key(1)]
         public long OwnerId { get; init; }
         [IgnoreMember]
+        [JsonIgnore]
         [ForeignKey("OwnerId")]
         public PlayerAccount Owner { get; init; }
         [Key(2)]

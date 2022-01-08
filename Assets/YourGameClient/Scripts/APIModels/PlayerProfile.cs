@@ -23,5 +23,26 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         public ulong IconBlobId { get; init; }
         [IgnoreMember]
         public IconBlob IconBlob { get; init; }
+
+        public Masked MakeMasked()
+        {
+            return new Masked {
+                Name = Name,
+                Motto = Motto,
+                IconBlobId = IconBlobId
+            };
+        }
+
+        [NotMapped]
+        [MessagePackObject]
+        public record Masked
+        {
+            [Key(0)]
+            public string Name { get; set; }
+            [Key(1)]
+            public string Motto { get; set; }
+            [Key(2)]
+            public ulong IconBlobId { get; init; }
+        }
     }
 }
