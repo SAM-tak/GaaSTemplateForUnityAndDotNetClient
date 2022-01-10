@@ -9,9 +9,9 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
     public record PlayerOwedServiceTicket
     {
         [Key(0)]
-        public long Id { get; init; }
+        public ulong Id { get; init; }
         [Key(1)]
-        public long OwnerId { get; init; }
+        public ulong OwnerId { get; init; }
         [IgnoreMember]
         [ForeignKey("OwnerId")]
         public PlayerAccount Owner { get; init; }
@@ -20,7 +20,7 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [Key(3)]
         public ConsumableStatus Status { get; set; }
         [Key(4)]
-        public DateTime Period { get; set; }
+        public DateTime? Period { get; set; }
         [Key(5)]
         public DateTime? UsedDate { get; set; }
         [Key(6)]

@@ -19,8 +19,8 @@ namespace YourGameClient
 
         public static ContentType CurrentAcceptContentType = ContentType.MessagePack;
         public static ContentType CurrentRequestContentType = ContentType.MessagePack;
-        public static long CurrentPlayerId = 0;
-        public static long CurrentDeviceId = 0;
+        public static ulong CurrentPlayerId = 0;
+        public static ulong CurrentDeviceId = 0;
         public static string CurrentSecurityToken;
 
         public enum ContentType
@@ -46,9 +46,10 @@ namespace YourGameClient
 
         public static async UniTask<PlayerAccount> GetPlayerAccount()
         {
-            using var request = UnityWebRequest.Get($"{apiRootUrl}/{CurrentPlayerId}/PlayerAccounts/self");
+            using var request = UnityWebRequest.Get($"{apiRootUrl}/PlayerAccounts/{CurrentPlayerId}");
             request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
             request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
+            request.SetRequestHeader("PlayerId", CurrentPlayerId.ToString());
             request.SetRequestHeader("DeviceId", CurrentDeviceId.ToString());
             Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
 
@@ -75,9 +76,10 @@ namespace YourGameClient
 
         public static async UniTask<IEnumerable<PlayerAccount.Masked>> GetPlayerAccounts(long[] ids)
         {
-            using var request = UnityWebRequest.Get($"{apiRootUrl}/{CurrentPlayerId}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}");
+            using var request = UnityWebRequest.Get($"{apiRootUrl}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}");
             request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
             request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
+            request.SetRequestHeader("PlayerId", CurrentPlayerId.ToString());
             request.SetRequestHeader("DeviceId", CurrentDeviceId.ToString());
             Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
 
@@ -106,7 +108,7 @@ namespace YourGameClient
         {
             if(!PlayerPrefs.HasKey(prefPlayerIdKey)) return UnityWebRequest.Result.ProtocolError;
 
-            var PlayerId = long.Parse(PlayerPrefs.GetString(prefPlayerIdKey));
+            var PlayerId = ulong.Parse(PlayerPrefs.GetString(prefPlayerIdKey));
             var deviceId = PlayerPrefs.GetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
             var newDeviceId = SystemInfo.deviceUniqueIdentifier != deviceId ? SystemInfo.deviceUniqueIdentifier : null;
 
@@ -158,7 +160,7 @@ namespace YourGameClient
 
         public static async UniTask<UnityWebRequest.Result> NewAccount()
         {
-            using var request = NewPostRequest($"{apiRootUrl}/signin", new AccountCreationRequest {
+            using var request = NewPostRequest($"{apiRootUrl}/signup", new AccountCreationRequest {
 #if UNITY_IOS
                 DeviceType = YourGameServer.Models.DeviceType.IOS,
 #elif UNITY_ANDROID

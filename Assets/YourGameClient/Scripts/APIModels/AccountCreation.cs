@@ -19,9 +19,9 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
     public record AccountCreationResult
     {
         [Key(0)]
-        public long Id { get; init; }
+        public ulong Id { get; init; }
         [Key(1)]
-        public long DeviceId { get; init; } // PlayerDevice Table index
+        public ulong DeviceId { get; init; } // PlayerDevice Table index
         [Key(2)]
         public string Token { get; init; }
     }

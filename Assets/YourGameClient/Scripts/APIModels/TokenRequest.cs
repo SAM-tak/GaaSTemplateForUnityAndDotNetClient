@@ -8,7 +8,7 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
     public record TokenRequest
     {
         [Key(0)]
-        public long Id { get; init; }
+        public ulong Id { get; init; }
         [Key(1)]
         public DeviceType DeviceType { get; init; }
         [Key(2)]
@@ -22,7 +22,7 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
     public record TokenRequestResult
     {
         [Key(0)]
-        public long DeviceId { get; init; } // PlayerDevice Table index
+        public ulong DeviceId { get; init; } // PlayerDevice Table index
         [Key(1)]
         public string Token { get; init; }
     }
