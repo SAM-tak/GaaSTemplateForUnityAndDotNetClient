@@ -27,5 +27,19 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         public DateTime? InvalidateDate { get; set; }
         [Key(7)]
         public DateTime? ExpireDate { get; set; }
+
+        public override int GetHashCode()
+        {
+            var hash = new HashCode();
+            hash.Add(Id);
+            hash.Add(OwnerId);
+            hash.Add(Origin);
+            hash.Add(Status);
+            hash.Add(Period);
+            hash.Add(UsedDate);
+            hash.Add(InvalidateDate);
+            hash.Add(ExpireDate);
+            return hash.ToHashCode();
+        }
     }
 }

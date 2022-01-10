@@ -49,7 +49,7 @@ namespace MessagePack.Resolvers
 
         static GeneratedResolverGetFormatterHelper()
         {
-            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(20)
+            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(19)
             {
                 { typeof(global::YourGameServer.Models.ConsumableOrigin), 0 },
                 { typeof(global::YourGameServer.Models.ConsumableStatus), 1 },
@@ -58,19 +58,18 @@ namespace MessagePack.Resolvers
                 { typeof(global::YourGameServer.Models.AccountCreationRequest), 4 },
                 { typeof(global::YourGameServer.Models.AccountCreationResult), 5 },
                 { typeof(global::YourGameServer.Models.LootBox), 6 },
-                { typeof(global::YourGameServer.Models.LUID), 7 },
-                { typeof(global::YourGameServer.Models.PlayerAccount), 8 },
-                { typeof(global::YourGameServer.Models.PlayerAccount.Masked), 9 },
-                { typeof(global::YourGameServer.Models.PlayerDevice), 10 },
-                { typeof(global::YourGameServer.Models.PlayerOwedServiceTicket), 11 },
-                { typeof(global::YourGameServer.Models.PlayerOwnedFreeServiceToken), 12 },
-                { typeof(global::YourGameServer.Models.PlayerOwnedPaidServiceToken), 13 },
-                { typeof(global::YourGameServer.Models.PlayerProfile), 14 },
-                { typeof(global::YourGameServer.Models.PlayerProfile.Masked), 15 },
-                { typeof(global::YourGameServer.Models.ServiceTicket), 16 },
-                { typeof(global::YourGameServer.Models.ServiceToken), 17 },
-                { typeof(global::YourGameServer.Models.TokenRequest), 18 },
-                { typeof(global::YourGameServer.Models.TokenRequestResult), 19 },
+                { typeof(global::YourGameServer.Models.PlayerAccount), 7 },
+                { typeof(global::YourGameServer.Models.PlayerAccount.Masked), 8 },
+                { typeof(global::YourGameServer.Models.PlayerDevice), 9 },
+                { typeof(global::YourGameServer.Models.PlayerOwedServiceTicket), 10 },
+                { typeof(global::YourGameServer.Models.PlayerOwnedFreeServiceToken), 11 },
+                { typeof(global::YourGameServer.Models.PlayerOwnedPaidServiceToken), 12 },
+                { typeof(global::YourGameServer.Models.PlayerProfile), 13 },
+                { typeof(global::YourGameServer.Models.PlayerProfile.Masked), 14 },
+                { typeof(global::YourGameServer.Models.ServiceTicket), 15 },
+                { typeof(global::YourGameServer.Models.ServiceToken), 16 },
+                { typeof(global::YourGameServer.Models.TokenRequest), 17 },
+                { typeof(global::YourGameServer.Models.TokenRequestResult), 18 },
             };
         }
 
@@ -91,19 +90,18 @@ namespace MessagePack.Resolvers
                 case 4: return new MessagePack.Formatters.YourGameServer.Models.AccountCreationRequestFormatter();
                 case 5: return new MessagePack.Formatters.YourGameServer.Models.AccountCreationResultFormatter();
                 case 6: return new MessagePack.Formatters.YourGameServer.Models.LootBoxFormatter();
-                case 7: return new MessagePack.Formatters.YourGameServer.Models.LUIDFormatter();
-                case 8: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccountFormatter();
-                case 9: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccount_MaskedFormatter();
-                case 10: return new MessagePack.Formatters.YourGameServer.Models.PlayerDeviceFormatter();
-                case 11: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwedServiceTicketFormatter();
-                case 12: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwnedFreeServiceTokenFormatter();
-                case 13: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwnedPaidServiceTokenFormatter();
-                case 14: return new MessagePack.Formatters.YourGameServer.Models.PlayerProfileFormatter();
-                case 15: return new MessagePack.Formatters.YourGameServer.Models.PlayerProfile_MaskedFormatter();
-                case 16: return new MessagePack.Formatters.YourGameServer.Models.ServiceTicketFormatter();
-                case 17: return new MessagePack.Formatters.YourGameServer.Models.ServiceTokenFormatter();
-                case 18: return new MessagePack.Formatters.YourGameServer.Models.TokenRequestFormatter();
-                case 19: return new MessagePack.Formatters.YourGameServer.Models.TokenRequestResultFormatter();
+                case 7: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccountFormatter();
+                case 8: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccount_MaskedFormatter();
+                case 9: return new MessagePack.Formatters.YourGameServer.Models.PlayerDeviceFormatter();
+                case 10: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwedServiceTicketFormatter();
+                case 11: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwnedFreeServiceTokenFormatter();
+                case 12: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwnedPaidServiceTokenFormatter();
+                case 13: return new MessagePack.Formatters.YourGameServer.Models.PlayerProfileFormatter();
+                case 14: return new MessagePack.Formatters.YourGameServer.Models.PlayerProfile_MaskedFormatter();
+                case 15: return new MessagePack.Formatters.YourGameServer.Models.ServiceTicketFormatter();
+                case 16: return new MessagePack.Formatters.YourGameServer.Models.ServiceTokenFormatter();
+                case 17: return new MessagePack.Formatters.YourGameServer.Models.TokenRequestFormatter();
+                case 18: return new MessagePack.Formatters.YourGameServer.Models.TokenRequestResultFormatter();
                 default: return null;
             }
         }
@@ -417,47 +415,6 @@ namespace MessagePack.Formatters.YourGameServer.Models
                 IconAddress = __IconAddress__,
                 BannerAddress = __BannerAddress__,
             };
-            reader.Depth--;
-            return ____result;
-        }
-    }
-    public sealed class LUIDFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.LUID>
-    {
-
-        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Models.LUID value, global::MessagePack.MessagePackSerializerOptions options)
-        {
-            writer.WriteArrayHeader(2);
-            writer.Write(value.id0);
-            writer.Write(value.id1);
-        }
-
-        public global::YourGameServer.Models.LUID Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
-        {
-            if (reader.TryReadNil())
-            {
-                throw new global::System.InvalidOperationException("typecode is null, struct not supported");
-            }
-
-            options.Security.DepthStep(ref reader);
-            var length = reader.ReadArrayHeader();
-            var ____result = new global::YourGameServer.Models.LUID();
-
-            for (int i = 0; i < length; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        ____result.id0 = reader.ReadUInt64();
-                        break;
-                    case 1:
-                        ____result.id1 = reader.ReadUInt16();
-                        break;
-                    default:
-                        reader.Skip();
-                        break;
-                }
-            }
-
             reader.Depth--;
             return ____result;
         }
@@ -1128,7 +1085,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
             options.Security.DepthStep(ref reader);
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
-            var __Id__ = default(long);
+            var __Id__ = default(ulong);
             var __Name__ = default(string);
             var __ProductName__ = default(string);
             var __DisplayName__ = default(string);
@@ -1140,7 +1097,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
                 switch (i)
                 {
                     case 0:
-                        __Id__ = reader.ReadInt64();
+                        __Id__ = reader.ReadUInt64();
                         break;
                     case 1:
                         __Name__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
@@ -1206,7 +1163,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
             options.Security.DepthStep(ref reader);
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
-            var __Id__ = default(long);
+            var __Id__ = default(ulong);
             var __Name__ = default(string);
             var __ProductName__ = default(string);
             var __DisplayName__ = default(string);
@@ -1218,7 +1175,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
                 switch (i)
                 {
                     case 0:
-                        __Id__ = reader.ReadInt64();
+                        __Id__ = reader.ReadUInt64();
                         break;
                     case 1:
                         __Name__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);

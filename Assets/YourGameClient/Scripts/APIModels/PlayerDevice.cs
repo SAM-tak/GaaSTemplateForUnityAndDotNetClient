@@ -42,5 +42,10 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         public DateTime? Since { get; set; }
         [Key(5)]
         public DateTime? LastUsed { get; set; }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, OwnerId, DeviceType, DeviceId, Since, LastUsed);
+        }
     }
 }

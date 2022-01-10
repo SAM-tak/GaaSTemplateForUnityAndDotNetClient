@@ -56,6 +56,21 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [JsonIgnore]
         public PlayerProfile Profile { get; init; }
 
+        public override int GetHashCode()
+        {
+            var hash = new HashCode();
+            hash.Add(Id);
+            hash.Add(Code);
+            hash.Add(CurrentDeviceId);
+            hash.Add(Status);
+            hash.Add(Since);
+            hash.Add(LastLogin);
+            hash.Add(InactivateDate);
+            hash.Add(BanDate);
+            hash.Add(ExpireDate);
+            return hash.ToHashCode();
+        }
+
         public Masked MakeMasked()
         {
             return new Masked {

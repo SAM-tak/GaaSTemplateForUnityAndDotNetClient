@@ -24,6 +24,11 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [IgnoreMember]
         public IconBlob IconBlob { get; init; }
 
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, OwnerId, Name, Motto, IconBlobId);
+        }
+
         public Masked MakeMasked()
         {
             return new Masked {

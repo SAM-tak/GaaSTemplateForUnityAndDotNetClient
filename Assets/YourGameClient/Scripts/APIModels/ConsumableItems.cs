@@ -50,7 +50,7 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
     public record ServiceToken
     {
         [Key(0)]
-        public long Id { get; set; }
+        public ulong Id { get; set; }
         [Key(1)]
         public string Name { get; set; }
         [Key(2)]
@@ -67,7 +67,7 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
     public record ServiceTicket
     {
         [Key(0)]
-        public long Id { get; set; }
+        public ulong Id { get; set; }
         [Key(1)]
         public string Name { get; set; }
         [Key(2)]
