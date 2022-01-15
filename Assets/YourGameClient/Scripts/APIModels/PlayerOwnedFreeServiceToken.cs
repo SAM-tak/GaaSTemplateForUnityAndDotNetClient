@@ -11,7 +11,7 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [Key(0)]
         public ulong Id { get; init; }
         [Key(1)]
-        public ulong OwnerId { get; init; }
+        public ulong OwnerId { get; set; }
         [IgnoreMember]
         [ForeignKey("OwnerId")]
         public PlayerAccount Owner { get; init; }
@@ -40,6 +40,19 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
             hash.Add(InvalidateDate);
             hash.Add(ExpireDate);
             return hash.ToHashCode();
+        }
+
+        public override string ToString() => $"{{{nameof(Id)}={Id}, {nameof(OwnerId)}={OwnerId}, {nameof(Origin)}={Origin}, {nameof(Status)}={Status}, {nameof(Period)}={Period}, {nameof(UsedDate)}={UsedDate}, {nameof(InvalidateDate)}={InvalidateDate}, {nameof(ExpireDate)}={ExpireDate}}}";
+
+        public void CopyFrom(PlayerOwnedFreeServiceToken token)
+        {
+            OwnerId = token.OwnerId;
+            Origin = token.Origin;
+            Status = token.Status;
+            Period = token.Period;
+            UsedDate = token.UsedDate;
+            InvalidateDate = token.InvalidateDate;
+            ExpireDate = token.ExpireDate;
         }
     }
 }

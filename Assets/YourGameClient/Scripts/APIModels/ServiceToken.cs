@@ -5,9 +5,8 @@ using MessagePack;
 
 namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet
 {
-    [Table("LootBoxes")]
     [MessagePackObject]
-    public record LootBox
+    public record ServiceToken
     {
         [Key(0)]
         public ulong Id { get; set; }
@@ -20,18 +19,15 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [Key(4)]
         public string Description { get; set; }
         [Key(5)]
-        public string IconAddress { get; set; }
-        [Key(6)]
-        public string BannerAddress { get; set; }
+        public ulong IconBlobId { get; set; }
 
-        public void CopyFrom(LootBox box)
+        public void CopyFrom(ServiceToken token)
         {
-            Name = box.Name;
-            ProductName = box.ProductName;
-            DisplayName = box.DisplayName;
-            Description = box.Description;
-            IconAddress = box.IconAddress;
-            BannerAddress = box.BannerAddress;
+            Name = token.Name;
+            ProductName = token.ProductName;
+            DisplayName = token.DisplayName;
+            Description = token.Description;
+            IconBlobId = token.IconBlobId;
         }
     }
 }

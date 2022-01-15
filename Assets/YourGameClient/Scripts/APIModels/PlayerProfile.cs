@@ -1,4 +1,5 @@
 using System; // Unity needs this
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using MessagePack;
@@ -16,17 +17,25 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [ForeignKey("OwnerId")]
         public PlayerAccount Owner { get; init; }
         [Key(2)]
-        public string Name { get; set; }
+        public DateTime? LastUpdate { get; set; }
         [Key(3)]
-        public string Motto { get; set; }
+        public string Name { get; set; }
         [Key(4)]
+        public string Motto { get; set; }
+        [Key(5)]
         public ulong IconBlobId { get; set; }
         [IgnoreMember]
         public IconBlob IconBlob { get; init; }
 
-        public override int GetHashCode()
+        public override int GetHashCode() => HashCode.Combine(Id, OwnerId, Name, Motto, IconBlobId);
+
+        public override string ToString() => $"{{{nameof(Id)}={Id}, {nameof(OwnerId)}={OwnerId}, {nameof(Name)}={Name}, {nameof(Motto)}={Motto}, {nameof(IconBlobId)}={IconBlobId}, {nameof(IconBlob)}={IconBlob}}}";
+
+        public void CopyFrom(PlayerProfile profile)
         {
-            return HashCode.Combine(Id, OwnerId, Name, Motto, IconBlobId);
+            Name = profile.Name;
+            Motto = profile.Motto;
+            IconBlobId = profile.IconBlobId;
         }
 
         public Masked MakeMasked()

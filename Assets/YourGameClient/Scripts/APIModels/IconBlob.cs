@@ -6,7 +6,7 @@ using MessagePack;
 namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet
 {
     [NotMapped]
-    public class IconBlob
+    public record IconBlob
     {
     }
 }

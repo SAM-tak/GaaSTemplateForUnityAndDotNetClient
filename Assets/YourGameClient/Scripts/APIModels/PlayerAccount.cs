@@ -14,15 +14,27 @@ using KeyAttribute = MessagePack.KeyAttribute;
 
 namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet
 {
+    public enum PlayerAccountKind
+    {
+        [Display(Name = "Guest")]
+        Guest,
+        [Display(Name = "Special Guest")]
+        SpecialGuest,
+        [Display(Name = "Comunity Manager")]
+        ComunityManager,
+        [Display(Name = "Staff")]
+        Staff,
+    }
+
     public enum PlayerAccountStatus
     {
-        [Description("Active")]
+        [Display(Name = "Active")]
         Active,
-        [Description("Inactive")]
+        [Display(Name = "Inactive")]
         Inactive,
-        [Description("Banned")]
+        [Display(Name = "Banned")]
         Banned,
-        [Description("Expired")]
+        [Display(Name = "Expired")]
         Expired,
     }
 
@@ -41,16 +53,18 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [JsonIgnore]
         public ulong CurrentDeviceId { get; set; }
         [Key(2)]
-        public PlayerAccountStatus Status { get; set; }
+        public PlayerAccountKind Kind { get; set; }
         [Key(3)]
-        public DateTime? Since { get; set; }
+        public PlayerAccountStatus Status { get; set; }
         [Key(4)]
-        public DateTime? LastLogin { get; set; }
+        public DateTime? Since { get; set; }
         [Key(5)]
-        public DateTime? InactivateDate { get; set; }
+        public DateTime? LastLogin { get; set; }
         [Key(6)]
-        public DateTime? BanDate { get; set; }
+        public DateTime? InactivateDate { get; set; }
         [Key(7)]
+        public DateTime? BanDate { get; set; }
+        [Key(8)]
         public DateTime? ExpireDate { get; set; }
         [IgnoreMember]
         [JsonIgnore]
@@ -69,6 +83,17 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
             hash.Add(BanDate);
             hash.Add(ExpireDate);
             return hash.ToHashCode();
+        }
+
+        public void CopyFrom(PlayerAccount account)
+        {
+            Code = account.Code;
+            Status = account.Status;
+            Since = account.Since;
+            LastLogin = account.LastLogin;
+            InactivateDate = account.InactivateDate;
+            BanDate = account.BanDate;
+            ExpireDate = account.ExpireDate;
         }
 
         public Masked MakeMasked()

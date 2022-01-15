@@ -1,82 +1,49 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
-using MessagePack;
+using System.ComponentModel.DataAnnotations;
 
 namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet
 {
     public enum ConsumableStatus
     {
-        [Description("Available")]
+        [Display(Name = "Available")]
         Available,
-        [Description("Consumed")]
+        [Display(Name = "Consumed")]
         Consumed,
-        [Description("Invalid")]
+        [Display(Name = "Invalid")]
         Invalid,
-        [Description("Expired")]
+        [Display(Name = "Expired")]
         Expired,
     }
 
     public enum ConsumableOrigin
     {
-        [Description("Log-In Reward")]
+        [Display(Name = "Not Specified")]
+        NotSpecified,
+        [Display(Name = "Log-In Reward")]
         LogInReward,
-        [Description("Mission Reward")]
+        [Display(Name = "Mission Reward")]
         MissionReward,
-        [Description("Quest Reward")]
+        [Display(Name = "Quest Reward")]
         QuestReward,
-        [Description("Achievement Reward")]
+        [Display(Name = "Achievement Reward")]
         AchievementReward,
-        [Description("Insentive")]
+        [Display(Name = "Insentive")]
         Insentive,
-        [Description("Wide-Distribution")]
+        [Display(Name = "Wide-Distribution")]
         Distribution,
-        [Description("Loot Box")]
+        [Display(Name = "Loot Box")]
         LootBox,
-        [Description("Compensation")]
+        [Display(Name = "Compensation")]
         Compensation,
-        [Description("apologize")]
-        apologize,
-        [Description("App Store")]
+        [Display(Name = "Apologies")]
+        Apologies,
+        [Display(Name = "App Store")]
         AppStore,
-        [Description("Google Play")]
+        [Display(Name = "Google Play")]
         GooglePlay,
-        [Description("DMM")]
+        [Display(Name = "DMM")]
         DMM,
-        [Description("Steam")]
+        [Display(Name = "Steam")]
         Steam,
-    }
-
-    [MessagePackObject]
-    public record ServiceToken
-    {
-        [Key(0)]
-        public ulong Id { get; set; }
-        [Key(1)]
-        public string Name { get; set; }
-        [Key(2)]
-        public string ProductName { get; set; }
-        [Key(3)]
-        public string DisplayName { get; set; }
-        [Key(4)]
-        public string Description { get; set; }
-        [Key(5)]
-        public ulong IconBlobId { get; init; }
-    }
-
-    [MessagePackObject]
-    public record ServiceTicket
-    {
-        [Key(0)]
-        public ulong Id { get; set; }
-        [Key(1)]
-        public string Name { get; set; }
-        [Key(2)]
-        public string ProductName { get; set; }
-        [Key(3)]
-        public string DisplayName { get; set; }
-        [Key(4)]
-        public string Description { get; set; }
-        [Key(5)]
-        public ulong IconBlobId { get; init; }
     }
 }

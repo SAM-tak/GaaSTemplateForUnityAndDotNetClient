@@ -1,6 +1,7 @@
 using System; // Unity needs this
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 #if UNITY_5_3_OR_NEWER
 using Newtonsoft.Json;
@@ -8,18 +9,19 @@ using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 #endif
 using MessagePack;
+using KeyAttribute = MessagePack.KeyAttribute;
 
 namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet
 {
     public enum DeviceType
     {
-        [Description("iOS")]
+        [Display(Name = "iOS")]
         IOS,
-        [Description("Android")]
+        [Display(Name = "Android")]
         Android,
-        [Description("Browser")]
+        [Display(Name = "Browser")]
         WebGL,
-        [Description("PC/Mac")]
+        [Display(Name = "PC/Mac")]
         StandAlone,
     }
 
@@ -43,9 +45,17 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [Key(5)]
         public DateTime? LastUsed { get; set; }
 
-        public override int GetHashCode()
+        public override int GetHashCode() => HashCode.Combine(Id, OwnerId, DeviceType, DeviceId, Since, LastUsed);
+
+        public override string ToString() => $"{{{nameof(Id)}={Id}, {nameof(OwnerId)}={OwnerId}, {nameof(DeviceType)}={DeviceType}, {nameof(DeviceId)}={DeviceId}, {nameof(Since)}={Since}, {nameof(LastUsed)}={LastUsed}}}";
+
+        public void CopyFrom(PlayerDevice device)
         {
-            return HashCode.Combine(Id, OwnerId, DeviceType, DeviceId, Since, LastUsed);
+            OwnerId = device.OwnerId;
+            DeviceType = device.DeviceType;
+            DeviceId = device.DeviceId;
+            Since = device.Since;
+            LastUsed = device.LastUsed;
         }
     }
 }
