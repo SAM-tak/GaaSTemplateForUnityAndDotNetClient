@@ -35,13 +35,6 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
 
         public override string ToString() => $"{{{nameof(Id)}={Id}, {nameof(OwnerId)}={OwnerId}, {nameof(Name)}={Name}, {nameof(Motto)}={Motto}, {nameof(IconBlobId)}={IconBlobId}}}";
 
-        public void CopyFrom(PlayerProfile profile)
-        {
-            Name = profile.Name;
-            Motto = profile.Motto;
-            IconBlobId = profile.IconBlobId;
-        }
-
         public MaskedPlayerProfile MakeMasked() => new() {
             Name = Name,
             Motto = Motto,
@@ -54,10 +47,10 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
     public record MaskedPlayerProfile
     {
         [Key(0)]
-        public string Name { get; set; }
+        public string Name { get; init; }
         [Key(1)]
-        public string Motto { get; set; }
+        public string Motto { get; init; }
         [Key(2)]
-        public ulong IconBlobId { get; set; }
+        public ulong IconBlobId { get; init; }
     }
 }

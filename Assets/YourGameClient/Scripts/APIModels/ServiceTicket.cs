@@ -19,7 +19,7 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
     public record ServiceTicket
     {
         [Key(0)]
-        public ulong Id { get; set; }
+        public ulong Id { get; init; }
         [Key(1)]
         public string Name { get; set; }
         [Key(2)]
@@ -34,16 +34,5 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         public ulong DetailId { get; set; }
         [Key(7)]
         public ulong IconBlobId { get; set; }
-
-        public void CopyFrom(ServiceTicket ticket)
-        {
-            Name = ticket.Name;
-            Kind = ticket.Kind;
-            ProductName = ticket.ProductName;
-            DisplayName = ticket.DisplayName;
-            Description = ticket.Description;
-            DetailId = ticket.DetailId;
-            IconBlobId = ticket.IconBlobId;
-        }
     }
 }

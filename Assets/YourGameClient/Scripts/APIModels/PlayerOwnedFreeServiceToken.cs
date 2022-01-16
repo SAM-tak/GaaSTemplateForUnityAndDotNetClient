@@ -49,16 +49,5 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         }
 
         public override string ToString() => $"{{{nameof(Id)}={Id}, {nameof(OwnerId)}={OwnerId}, {nameof(Origin)}={Origin}, {nameof(Status)}={Status}, {nameof(Period)}={Period}, {nameof(UsedDate)}={UsedDate}, {nameof(InvalidateDate)}={InvalidateDate}, {nameof(ExpireDate)}={ExpireDate}}}";
-
-        public void CopyFrom(PlayerOwnedFreeServiceToken token)
-        {
-            OwnerId = token.OwnerId;
-            Origin = token.Origin;
-            Status = token.Status;
-            Period = token.Period;
-            UsedDate = token.UsedDate;
-            InvalidateDate = token.InvalidateDate;
-            ExpireDate = token.ExpireDate;
-        }
     }
 }

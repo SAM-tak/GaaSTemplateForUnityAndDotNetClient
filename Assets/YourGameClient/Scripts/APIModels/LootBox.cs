@@ -23,15 +23,5 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         public string IconAddress { get; set; }
         [Key(6)]
         public string BannerAddress { get; set; }
-
-        public void CopyFrom(LootBox box)
-        {
-            Name = box.Name;
-            ProductName = box.ProductName;
-            DisplayName = box.DisplayName;
-            Description = box.Description;
-            IconAddress = box.IconAddress;
-            BannerAddress = box.BannerAddress;
-        }
     }
 }

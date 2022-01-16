@@ -54,14 +54,5 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         public override int GetHashCode() => HashCode.Combine(Id, OwnerId, DeviceType, DeviceId, Since, LastUsed);
 
         public override string ToString() => $"{{{nameof(Id)}={Id}, {nameof(OwnerId)}={OwnerId}, {nameof(DeviceType)}={DeviceType}, {nameof(DeviceId)}={DeviceId}, {nameof(Since)}={Since}, {nameof(LastUsed)}={LastUsed}}}";
-
-        public void CopyFrom(PlayerDevice device)
-        {
-            OwnerId = device.OwnerId;
-            DeviceType = device.DeviceType;
-            DeviceId = device.DeviceId;
-            Since = device.Since;
-            LastUsed = device.LastUsed;
-        }
     }
 }

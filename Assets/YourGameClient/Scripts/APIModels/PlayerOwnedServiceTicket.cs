@@ -56,17 +56,5 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         }
 
         public override string ToString() => $"{{{nameof(Id)}={Id}, {nameof(OwnerId)}={OwnerId}, {nameof(ServiceTicketId)}={ServiceTicketId}, {nameof(Origin)}={Origin}, {nameof(Status)}={Status}, {nameof(Period)}={Period}, {nameof(UsedDate)}={UsedDate}, {nameof(InvalidateDate)}={InvalidateDate}, {nameof(ExpireDate)}={ExpireDate}}}";
-
-        public void CopyFrom(PlayerOwnedServiceTicket ticket)
-        {
-            OwnerId = ticket.OwnerId;
-            ServiceTicketId = ticket.ServiceTicketId;
-            Origin = ticket.Origin;
-            Status = ticket.Status;
-            Period = ticket.Period;
-            UsedDate = ticket.UsedDate;
-            InvalidateDate = ticket.InvalidateDate;
-            ExpireDate = ticket.ExpireDate;
-        }
     }
 }

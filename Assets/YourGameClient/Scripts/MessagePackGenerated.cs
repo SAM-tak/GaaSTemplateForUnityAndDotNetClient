@@ -581,20 +581,22 @@ namespace MessagePack.Formatters.YourGameServer.Models
             options.Security.DepthStep(ref reader);
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
-            var ____result = new global::YourGameServer.Models.MaskedPlayerProfile();
+            var __Name__ = default(string);
+            var __Motto__ = default(string);
+            var __IconBlobId__ = default(ulong);
 
             for (int i = 0; i < length; i++)
             {
                 switch (i)
                 {
                     case 0:
-                        ____result.Name = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __Name__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 1:
-                        ____result.Motto = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __Motto__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 2:
-                        ____result.IconBlobId = reader.ReadUInt64();
+                        __IconBlobId__ = reader.ReadUInt64();
                         break;
                     default:
                         reader.Skip();
@@ -602,6 +604,11 @@ namespace MessagePack.Formatters.YourGameServer.Models
                 }
             }
 
+            var ____result = new global::YourGameServer.Models.MaskedPlayerProfile() {
+                Name = __Name__,
+                Motto = __Motto__,
+                IconBlobId = __IconBlobId__,
+            };
             reader.Depth--;
             return ____result;
         }
@@ -1173,35 +1180,42 @@ namespace MessagePack.Formatters.YourGameServer.Models
             options.Security.DepthStep(ref reader);
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
-            var ____result = new global::YourGameServer.Models.ServiceTicket();
+            var __Id__ = default(ulong);
+            var __Name__ = default(string);
+            var __Kind__ = default(global::YourGameServer.Models.ServiceTicketKind);
+            var __ProductName__ = default(string);
+            var __DisplayName__ = default(string);
+            var __Description__ = default(string);
+            var __DetailId__ = default(ulong);
+            var __IconBlobId__ = default(ulong);
 
             for (int i = 0; i < length; i++)
             {
                 switch (i)
                 {
                     case 0:
-                        ____result.Id = reader.ReadUInt64();
+                        __Id__ = reader.ReadUInt64();
                         break;
                     case 1:
-                        ____result.Name = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __Name__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 2:
-                        ____result.Kind = formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.ServiceTicketKind>().Deserialize(ref reader, options);
+                        __Kind__ = formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.ServiceTicketKind>().Deserialize(ref reader, options);
                         break;
                     case 3:
-                        ____result.ProductName = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __ProductName__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 4:
-                        ____result.DisplayName = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __DisplayName__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 5:
-                        ____result.Description = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __Description__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 6:
-                        ____result.DetailId = reader.ReadUInt64();
+                        __DetailId__ = reader.ReadUInt64();
                         break;
                     case 7:
-                        ____result.IconBlobId = reader.ReadUInt64();
+                        __IconBlobId__ = reader.ReadUInt64();
                         break;
                     default:
                         reader.Skip();
@@ -1209,6 +1223,16 @@ namespace MessagePack.Formatters.YourGameServer.Models
                 }
             }
 
+            var ____result = new global::YourGameServer.Models.ServiceTicket() {
+                Id = __Id__,
+                Name = __Name__,
+                Kind = __Kind__,
+                ProductName = __ProductName__,
+                DisplayName = __DisplayName__,
+                Description = __Description__,
+                DetailId = __DetailId__,
+                IconBlobId = __IconBlobId__,
+            };
             reader.Depth--;
             return ____result;
         }
@@ -1244,29 +1268,34 @@ namespace MessagePack.Formatters.YourGameServer.Models
             options.Security.DepthStep(ref reader);
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
-            var ____result = new global::YourGameServer.Models.ServiceToken();
+            var __Id__ = default(ulong);
+            var __Name__ = default(string);
+            var __ProductName__ = default(string);
+            var __DisplayName__ = default(string);
+            var __Description__ = default(string);
+            var __IconBlobId__ = default(ulong);
 
             for (int i = 0; i < length; i++)
             {
                 switch (i)
                 {
                     case 0:
-                        ____result.Id = reader.ReadUInt64();
+                        __Id__ = reader.ReadUInt64();
                         break;
                     case 1:
-                        ____result.Name = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __Name__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 2:
-                        ____result.ProductName = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __ProductName__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 3:
-                        ____result.DisplayName = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __DisplayName__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 4:
-                        ____result.Description = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __Description__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 5:
-                        ____result.IconBlobId = reader.ReadUInt64();
+                        __IconBlobId__ = reader.ReadUInt64();
                         break;
                     default:
                         reader.Skip();
@@ -1274,6 +1303,14 @@ namespace MessagePack.Formatters.YourGameServer.Models
                 }
             }
 
+            var ____result = new global::YourGameServer.Models.ServiceToken() {
+                Id = __Id__,
+                Name = __Name__,
+                ProductName = __ProductName__,
+                DisplayName = __DisplayName__,
+                Description = __Description__,
+                IconBlobId = __IconBlobId__,
+            };
             reader.Depth--;
             return ____result;
         }

@@ -95,17 +95,6 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
             return hash.ToHashCode();
         }
 
-        public void CopyFrom(PlayerAccount account)
-        {
-            Code = account.Code;
-            Status = account.Status;
-            Since = account.Since;
-            LastLogin = account.LastLogin;
-            InactivateDate = account.InactivateDate;
-            BanDate = account.BanDate;
-            ExpireDate = account.ExpireDate;
-        }
-
         public MaskedPlayerAccount MakeMasked() => new() {
             Id = Id,
             Status = Status,
@@ -122,11 +111,11 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [Key(0)]
         public ulong Id { get; init; }
         [Key(1)]
-        public PlayerAccountStatus Status { get; set; }
+        public PlayerAccountStatus Status { get; init; }
         [Key(2)]
-        public DateTime? Since { get; set; }
+        public DateTime? Since { get; init; }
         [Key(3)]
-        public DateTime? LastLogin { get; set; }
+        public DateTime? LastLogin { get; init; }
         [Key(4)]
         public MaskedPlayerProfile Profile { get; init; }
     }
