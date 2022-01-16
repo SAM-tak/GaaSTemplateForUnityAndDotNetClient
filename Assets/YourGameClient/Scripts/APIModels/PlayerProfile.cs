@@ -2,6 +2,11 @@ using System; // Unity needs this
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+#if UNITY_5_3_OR_NEWER
+using Newtonsoft.Json;
+#else
+using System.Text.Json.Serialization;
+#endif
 using MessagePack;
 
 namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet
@@ -14,6 +19,7 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [Key(1)]
         public ulong OwnerId { get; set; }
         [IgnoreMember]
+        [JsonIgnore]
         [ForeignKey("OwnerId")]
         public PlayerAccount Owner { get; init; }
         [Key(2)]
@@ -24,12 +30,10 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         public string Motto { get; set; }
         [Key(5)]
         public ulong IconBlobId { get; set; }
-        [IgnoreMember]
-        public IconBlob IconBlob { get; init; }
 
         public override int GetHashCode() => HashCode.Combine(Id, OwnerId, Name, Motto, IconBlobId);
 
-        public override string ToString() => $"{{{nameof(Id)}={Id}, {nameof(OwnerId)}={OwnerId}, {nameof(Name)}={Name}, {nameof(Motto)}={Motto}, {nameof(IconBlobId)}={IconBlobId}, {nameof(IconBlob)}={IconBlob}}}";
+        public override string ToString() => $"{{{nameof(Id)}={Id}, {nameof(OwnerId)}={OwnerId}, {nameof(Name)}={Name}, {nameof(Motto)}={Motto}, {nameof(IconBlobId)}={IconBlobId}}}";
 
         public void CopyFrom(PlayerProfile profile)
         {
@@ -38,25 +42,22 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
             IconBlobId = profile.IconBlobId;
         }
 
-        public Masked MakeMasked()
-        {
-            return new Masked {
-                Name = Name,
-                Motto = Motto,
-                IconBlobId = IconBlobId
-            };
-        }
+        public MaskedPlayerProfile MakeMasked() => new() {
+            Name = Name,
+            Motto = Motto,
+            IconBlobId = IconBlobId
+        };
+    }
 
-        [NotMapped]
-        [MessagePackObject]
-        public record Masked
-        {
-            [Key(0)]
-            public string Name { get; set; }
-            [Key(1)]
-            public string Motto { get; set; }
-            [Key(2)]
-            public ulong IconBlobId { get; set; }
-        }
+    [NotMapped]
+    [MessagePackObject]
+    public record MaskedPlayerProfile
+    {
+        [Key(0)]
+        public string Name { get; set; }
+        [Key(1)]
+        public string Motto { get; set; }
+        [Key(2)]
+        public ulong IconBlobId { get; set; }
     }
 }

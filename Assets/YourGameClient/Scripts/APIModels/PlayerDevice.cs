@@ -29,20 +29,26 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
     public record PlayerDevice
     {
         [Key(0)]
+        [Display(Name = "ID")]
         public ulong Id { get; init; }
         [Key(1)]
+        [Display(Name = "Owner Id")]
         public ulong OwnerId { get; set; }
         [IgnoreMember]
         [JsonIgnore]
         [ForeignKey("OwnerId")]
         public PlayerAccount Owner { get; init; }
         [Key(2)]
+        [Display(Name = "Device Type")]
         public DeviceType DeviceType { get; set; }
         [Key(3)]
+        [Display(Name = "Device ID")]
         public string DeviceId { get; set; }
         [Key(4)]
+        [Display(Name = "Since")]
         public DateTime? Since { get; set; }
         [Key(5)]
+        [Display(Name = "Last Used Date & Time")]
         public DateTime? LastUsed { get; set; }
 
         public override int GetHashCode() => HashCode.Combine(Id, OwnerId, DeviceType, DeviceId, Since, LastUsed);
