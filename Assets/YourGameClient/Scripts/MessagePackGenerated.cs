@@ -49,7 +49,7 @@ namespace MessagePack.Resolvers
 
         static GeneratedResolverGetFormatterHelper()
         {
-            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(22)
+            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(23)
             {
                 { typeof(global::YourGameServer.Models.ConsumableOrigin), 0 },
                 { typeof(global::YourGameServer.Models.ConsumableStatus), 1 },
@@ -57,22 +57,23 @@ namespace MessagePack.Resolvers
                 { typeof(global::YourGameServer.Models.PlayerAccountKind), 3 },
                 { typeof(global::YourGameServer.Models.PlayerAccountStatus), 4 },
                 { typeof(global::YourGameServer.Models.ServiceTicketKind), 5 },
-                { typeof(global::YourGameServer.Models.AccountCreationRequest), 6 },
-                { typeof(global::YourGameServer.Models.AccountCreationResult), 7 },
-                { typeof(global::YourGameServer.Models.IconBlob), 8 },
-                { typeof(global::YourGameServer.Models.LootBox), 9 },
-                { typeof(global::YourGameServer.Models.MaskedPlayerAccount), 10 },
-                { typeof(global::YourGameServer.Models.MaskedPlayerProfile), 11 },
-                { typeof(global::YourGameServer.Models.PlayerAccount), 12 },
-                { typeof(global::YourGameServer.Models.PlayerDevice), 13 },
-                { typeof(global::YourGameServer.Models.PlayerOwnedFreeServiceToken), 14 },
-                { typeof(global::YourGameServer.Models.PlayerOwnedPaidServiceToken), 15 },
-                { typeof(global::YourGameServer.Models.PlayerOwnedServiceTicket), 16 },
-                { typeof(global::YourGameServer.Models.PlayerProfile), 17 },
-                { typeof(global::YourGameServer.Models.ServiceTicket), 18 },
-                { typeof(global::YourGameServer.Models.ServiceToken), 19 },
-                { typeof(global::YourGameServer.Models.TokenRequest), 20 },
-                { typeof(global::YourGameServer.Models.TokenRequestResult), 21 },
+                { typeof(global::YourGameServer.Interface.LogInRequest), 6 },
+                { typeof(global::YourGameServer.Interface.LogInRequestResult), 7 },
+                { typeof(global::YourGameServer.Interface.RenewTokenRequestResult), 8 },
+                { typeof(global::YourGameServer.Interface.SignInRequest), 9 },
+                { typeof(global::YourGameServer.Interface.SignInRequestResult), 10 },
+                { typeof(global::YourGameServer.Models.IconBlob), 11 },
+                { typeof(global::YourGameServer.Models.LootBox), 12 },
+                { typeof(global::YourGameServer.Models.MaskedPlayerAccount), 13 },
+                { typeof(global::YourGameServer.Models.MaskedPlayerProfile), 14 },
+                { typeof(global::YourGameServer.Models.PlayerAccount), 15 },
+                { typeof(global::YourGameServer.Models.PlayerDevice), 16 },
+                { typeof(global::YourGameServer.Models.PlayerOwnedFreeServiceToken), 17 },
+                { typeof(global::YourGameServer.Models.PlayerOwnedPaidServiceToken), 18 },
+                { typeof(global::YourGameServer.Models.PlayerOwnedServiceTicket), 19 },
+                { typeof(global::YourGameServer.Models.PlayerProfile), 20 },
+                { typeof(global::YourGameServer.Models.ServiceTicket), 21 },
+                { typeof(global::YourGameServer.Models.ServiceToken), 22 },
             };
         }
 
@@ -92,22 +93,23 @@ namespace MessagePack.Resolvers
                 case 3: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccountKindFormatter();
                 case 4: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccountStatusFormatter();
                 case 5: return new MessagePack.Formatters.YourGameServer.Models.ServiceTicketKindFormatter();
-                case 6: return new MessagePack.Formatters.YourGameServer.Models.AccountCreationRequestFormatter();
-                case 7: return new MessagePack.Formatters.YourGameServer.Models.AccountCreationResultFormatter();
-                case 8: return new MessagePack.Formatters.YourGameServer.Models.IconBlobFormatter();
-                case 9: return new MessagePack.Formatters.YourGameServer.Models.LootBoxFormatter();
-                case 10: return new MessagePack.Formatters.YourGameServer.Models.MaskedPlayerAccountFormatter();
-                case 11: return new MessagePack.Formatters.YourGameServer.Models.MaskedPlayerProfileFormatter();
-                case 12: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccountFormatter();
-                case 13: return new MessagePack.Formatters.YourGameServer.Models.PlayerDeviceFormatter();
-                case 14: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwnedFreeServiceTokenFormatter();
-                case 15: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwnedPaidServiceTokenFormatter();
-                case 16: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwnedServiceTicketFormatter();
-                case 17: return new MessagePack.Formatters.YourGameServer.Models.PlayerProfileFormatter();
-                case 18: return new MessagePack.Formatters.YourGameServer.Models.ServiceTicketFormatter();
-                case 19: return new MessagePack.Formatters.YourGameServer.Models.ServiceTokenFormatter();
-                case 20: return new MessagePack.Formatters.YourGameServer.Models.TokenRequestFormatter();
-                case 21: return new MessagePack.Formatters.YourGameServer.Models.TokenRequestResultFormatter();
+                case 6: return new MessagePack.Formatters.YourGameServer.Interface.LogInRequestFormatter();
+                case 7: return new MessagePack.Formatters.YourGameServer.Interface.LogInRequestResultFormatter();
+                case 8: return new MessagePack.Formatters.YourGameServer.Interface.RenewTokenRequestResultFormatter();
+                case 9: return new MessagePack.Formatters.YourGameServer.Interface.SignInRequestFormatter();
+                case 10: return new MessagePack.Formatters.YourGameServer.Interface.SignInRequestResultFormatter();
+                case 11: return new MessagePack.Formatters.YourGameServer.Models.IconBlobFormatter();
+                case 12: return new MessagePack.Formatters.YourGameServer.Models.LootBoxFormatter();
+                case 13: return new MessagePack.Formatters.YourGameServer.Models.MaskedPlayerAccountFormatter();
+                case 14: return new MessagePack.Formatters.YourGameServer.Models.MaskedPlayerProfileFormatter();
+                case 15: return new MessagePack.Formatters.YourGameServer.Models.PlayerAccountFormatter();
+                case 16: return new MessagePack.Formatters.YourGameServer.Models.PlayerDeviceFormatter();
+                case 17: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwnedFreeServiceTokenFormatter();
+                case 18: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwnedPaidServiceTokenFormatter();
+                case 19: return new MessagePack.Formatters.YourGameServer.Models.PlayerOwnedServiceTicketFormatter();
+                case 20: return new MessagePack.Formatters.YourGameServer.Models.PlayerProfileFormatter();
+                case 21: return new MessagePack.Formatters.YourGameServer.Models.ServiceTicketFormatter();
+                case 22: return new MessagePack.Formatters.YourGameServer.Models.ServiceTokenFormatter();
                 default: return null;
             }
         }
@@ -249,14 +251,173 @@ namespace MessagePack.Formatters.YourGameServer.Models
 #pragma warning disable SA1403 // File may only contain a single namespace
 #pragma warning disable SA1649 // File name should match first type name
 
-namespace MessagePack.Formatters.YourGameServer.Models
+namespace MessagePack.Formatters.YourGameServer.Interface
 {
     using global::System.Buffers;
     using global::MessagePack;
-    public sealed class AccountCreationRequestFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.AccountCreationRequest>
+    public sealed class LogInRequestFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Interface.LogInRequest>
     {
 
-        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Models.AccountCreationRequest value, global::MessagePack.MessagePackSerializerOptions options)
+        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Interface.LogInRequest value, global::MessagePack.MessagePackSerializerOptions options)
+        {
+            if (value == null)
+            {
+                writer.WriteNil();
+                return;
+            }
+
+            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+            writer.WriteArrayHeader(4);
+            writer.Write(value.Id);
+            formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.DeviceType>().Serialize(ref writer, value.DeviceType, options);
+            formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.DeviceId, options);
+            formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.NewDeviceId, options);
+        }
+
+        public global::YourGameServer.Interface.LogInRequest Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
+        {
+            if (reader.TryReadNil())
+            {
+                return null;
+            }
+
+            options.Security.DepthStep(ref reader);
+            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+            var length = reader.ReadArrayHeader();
+            var ____result = new global::YourGameServer.Interface.LogInRequest();
+
+            for (int i = 0; i < length; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        ____result.Id = reader.ReadUInt64();
+                        break;
+                    case 1:
+                        ____result.DeviceType = formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.DeviceType>().Deserialize(ref reader, options);
+                        break;
+                    case 2:
+                        ____result.DeviceId = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        break;
+                    case 3:
+                        ____result.NewDeviceId = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        break;
+                    default:
+                        reader.Skip();
+                        break;
+                }
+            }
+
+            reader.Depth--;
+            return ____result;
+        }
+    }
+    public sealed class LogInRequestResultFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Interface.LogInRequestResult>
+    {
+
+        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Interface.LogInRequestResult value, global::MessagePack.MessagePackSerializerOptions options)
+        {
+            if (value == null)
+            {
+                writer.WriteNil();
+                return;
+            }
+
+            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+            writer.WriteArrayHeader(2);
+            writer.Write(value.DeviceId);
+            formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.Token, options);
+        }
+
+        public global::YourGameServer.Interface.LogInRequestResult Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
+        {
+            if (reader.TryReadNil())
+            {
+                return null;
+            }
+
+            options.Security.DepthStep(ref reader);
+            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+            var length = reader.ReadArrayHeader();
+            var __DeviceId__ = default(ulong);
+            var __Token__ = default(string);
+
+            for (int i = 0; i < length; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        __DeviceId__ = reader.ReadUInt64();
+                        break;
+                    case 1:
+                        __Token__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        break;
+                    default:
+                        reader.Skip();
+                        break;
+                }
+            }
+
+            var ____result = new global::YourGameServer.Interface.LogInRequestResult() {
+                DeviceId = __DeviceId__,
+                Token = __Token__,
+            };
+            reader.Depth--;
+            return ____result;
+        }
+    }
+    public sealed class RenewTokenRequestResultFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Interface.RenewTokenRequestResult>
+    {
+
+        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Interface.RenewTokenRequestResult value, global::MessagePack.MessagePackSerializerOptions options)
+        {
+            if (value == null)
+            {
+                writer.WriteNil();
+                return;
+            }
+
+            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+            writer.WriteArrayHeader(1);
+            formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.Token, options);
+        }
+
+        public global::YourGameServer.Interface.RenewTokenRequestResult Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
+        {
+            if (reader.TryReadNil())
+            {
+                return null;
+            }
+
+            options.Security.DepthStep(ref reader);
+            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+            var length = reader.ReadArrayHeader();
+            var __Token__ = default(string);
+
+            for (int i = 0; i < length; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        __Token__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        break;
+                    default:
+                        reader.Skip();
+                        break;
+                }
+            }
+
+            var ____result = new global::YourGameServer.Interface.RenewTokenRequestResult() {
+                Token = __Token__,
+            };
+            reader.Depth--;
+            return ____result;
+        }
+    }
+    public sealed class SignInRequestFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Interface.SignInRequest>
+    {
+
+        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Interface.SignInRequest value, global::MessagePack.MessagePackSerializerOptions options)
         {
             if (value == null)
             {
@@ -270,7 +431,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
             formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.DeviceId, options);
         }
 
-        public global::YourGameServer.Models.AccountCreationRequest Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
+        public global::YourGameServer.Interface.SignInRequest Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
         {
             if (reader.TryReadNil())
             {
@@ -299,7 +460,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
                 }
             }
 
-            var ____result = new global::YourGameServer.Models.AccountCreationRequest() {
+            var ____result = new global::YourGameServer.Interface.SignInRequest() {
                 DeviceType = __DeviceType__,
                 DeviceId = __DeviceId__,
             };
@@ -307,10 +468,10 @@ namespace MessagePack.Formatters.YourGameServer.Models
             return ____result;
         }
     }
-    public sealed class AccountCreationResultFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.AccountCreationResult>
+    public sealed class SignInRequestResultFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Interface.SignInRequestResult>
     {
 
-        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Models.AccountCreationResult value, global::MessagePack.MessagePackSerializerOptions options)
+        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Interface.SignInRequestResult value, global::MessagePack.MessagePackSerializerOptions options)
         {
             if (value == null)
             {
@@ -325,7 +486,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
             formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.Token, options);
         }
 
-        public global::YourGameServer.Models.AccountCreationResult Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
+        public global::YourGameServer.Interface.SignInRequestResult Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
         {
             if (reader.TryReadNil())
             {
@@ -358,7 +519,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
                 }
             }
 
-            var ____result = new global::YourGameServer.Models.AccountCreationResult() {
+            var ____result = new global::YourGameServer.Interface.SignInRequestResult() {
                 Id = __Id__,
                 DeviceId = __DeviceId__,
                 Token = __Token__,
@@ -367,6 +528,40 @@ namespace MessagePack.Formatters.YourGameServer.Models
             return ____result;
         }
     }
+}
+
+#pragma warning restore 168
+#pragma warning restore 414
+#pragma warning restore 618
+#pragma warning restore 612
+
+#pragma warning restore SA1129 // Do not use default value type constructor
+#pragma warning restore SA1200 // Using directives should be placed correctly
+#pragma warning restore SA1309 // Field names should not begin with underscore
+#pragma warning restore SA1312 // Variable names should begin with lower-case letter
+#pragma warning restore SA1403 // File may only contain a single namespace
+#pragma warning restore SA1649 // File name should match first type name
+
+// <auto-generated>
+// THIS (.cs) FILE IS GENERATED BY MPC(MessagePack-CSharp). DO NOT CHANGE IT.
+// </auto-generated>
+
+#pragma warning disable 618
+#pragma warning disable 612
+#pragma warning disable 414
+#pragma warning disable 168
+
+#pragma warning disable SA1129 // Do not use default value type constructor
+#pragma warning disable SA1200 // Using directives should be placed correctly
+#pragma warning disable SA1309 // Field names should not begin with underscore
+#pragma warning disable SA1312 // Variable names should begin with lower-case letter
+#pragma warning disable SA1403 // File may only contain a single namespace
+#pragma warning disable SA1649 // File name should match first type name
+
+namespace MessagePack.Formatters.YourGameServer.Models
+{
+    using global::System.Buffers;
+    using global::MessagePack;
     public sealed class IconBlobFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.IconBlob>
     {
 
@@ -1310,126 +1505,6 @@ namespace MessagePack.Formatters.YourGameServer.Models
                 DisplayName = __DisplayName__,
                 Description = __Description__,
                 IconBlobId = __IconBlobId__,
-            };
-            reader.Depth--;
-            return ____result;
-        }
-    }
-    public sealed class TokenRequestFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.TokenRequest>
-    {
-
-        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Models.TokenRequest value, global::MessagePack.MessagePackSerializerOptions options)
-        {
-            if (value == null)
-            {
-                writer.WriteNil();
-                return;
-            }
-
-            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
-            writer.WriteArrayHeader(4);
-            writer.Write(value.Id);
-            formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.DeviceType>().Serialize(ref writer, value.DeviceType, options);
-            formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.DeviceId, options);
-            formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.NewDeviceId, options);
-        }
-
-        public global::YourGameServer.Models.TokenRequest Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
-        {
-            if (reader.TryReadNil())
-            {
-                return null;
-            }
-
-            options.Security.DepthStep(ref reader);
-            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
-            var length = reader.ReadArrayHeader();
-            var __Id__ = default(ulong);
-            var __DeviceType__ = default(global::YourGameServer.Models.DeviceType);
-            var __DeviceId__ = default(string);
-            var __NewDeviceId__ = default(string);
-
-            for (int i = 0; i < length; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        __Id__ = reader.ReadUInt64();
-                        break;
-                    case 1:
-                        __DeviceType__ = formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.DeviceType>().Deserialize(ref reader, options);
-                        break;
-                    case 2:
-                        __DeviceId__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
-                        break;
-                    case 3:
-                        __NewDeviceId__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
-                        break;
-                    default:
-                        reader.Skip();
-                        break;
-                }
-            }
-
-            var ____result = new global::YourGameServer.Models.TokenRequest() {
-                Id = __Id__,
-                DeviceType = __DeviceType__,
-                DeviceId = __DeviceId__,
-                NewDeviceId = __NewDeviceId__,
-            };
-            reader.Depth--;
-            return ____result;
-        }
-    }
-    public sealed class TokenRequestResultFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::YourGameServer.Models.TokenRequestResult>
-    {
-
-        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::YourGameServer.Models.TokenRequestResult value, global::MessagePack.MessagePackSerializerOptions options)
-        {
-            if (value == null)
-            {
-                writer.WriteNil();
-                return;
-            }
-
-            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
-            writer.WriteArrayHeader(2);
-            writer.Write(value.DeviceId);
-            formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.Token, options);
-        }
-
-        public global::YourGameServer.Models.TokenRequestResult Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
-        {
-            if (reader.TryReadNil())
-            {
-                return null;
-            }
-
-            options.Security.DepthStep(ref reader);
-            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
-            var length = reader.ReadArrayHeader();
-            var __DeviceId__ = default(ulong);
-            var __Token__ = default(string);
-
-            for (int i = 0; i < length; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        __DeviceId__ = reader.ReadUInt64();
-                        break;
-                    case 1:
-                        __Token__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
-                        break;
-                    default:
-                        reader.Skip();
-                        break;
-                }
-            }
-
-            var ____result = new global::YourGameServer.Models.TokenRequestResult() {
-                DeviceId = __DeviceId__,
-                Token = __Token__,
             };
             reader.Depth--;
             return ____result;

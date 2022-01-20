@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.cysharp.magiconion": {
+      "version": "https://github.com/Cysharp/MagicOnion.git?path=src/MagicOnion.Client.Unity/Assets/Scripts/MagicOnion#4.3.1",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "b677bb887ad1311ce9b0b3a999e3e3463edb25a3"
+    },
     "com.cysharp.unitask": {
       "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.2.5",
       "depth": 0,
@@ -221,11 +228,11 @@
       "url": "https://packages.unity.com"
     },
     "net.sam-tak.customunity": {
-      "version": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.3",
+      "version": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.4",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "bf3564340356130c1ef32dd4d87e665aa1a85813"
+      "hash": "48baa6fe9885a510f8a5433f9f4cf6b6268184d8"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

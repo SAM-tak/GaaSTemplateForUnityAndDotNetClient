@@ -1,18 +1,26 @@
 using System.Collections.Generic;
 using System.Linq;
+using Grpc.Core;
+using MagicOnion.Client;
 using UnityEngine;
 using UnityEngine.Networking;
 using Cysharp.Threading.Tasks;
 using MessagePack;
 using CustomUnity;
 using YourGameServer.Models;
+using YourGameServer.Interface;
+using System.Threading.Tasks;
+using System;
 
 namespace YourGameClient
 {
     public static class Request
     {
-        public const string serverUrl = "https://localhost:7142";
-        public const string apiRootUrl = serverUrl + "/api";
+        public const string serverAddr = "localhost";
+        public const int serverPort = 7142;
+        public const int serverRpcPort = 5019;
+        public static readonly string apiRootUrl = $"https://{serverAddr}:{serverPort}/api";
+
         public const string prefPrefix = "com.yourorg.yourgame.";
         public const string prefPlayerIdKey = prefPrefix + "playerid";
         public const string prefLastDeviceIdKey = prefPrefix + "lastdeviceid";
@@ -49,8 +57,6 @@ namespace YourGameClient
             using var request = UnityWebRequest.Get($"{apiRootUrl}/PlayerAccounts/{CurrentPlayerId}");
             request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
             request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
-            request.SetRequestHeader("PlayerId", CurrentPlayerId.ToString());
-            request.SetRequestHeader("DeviceId", CurrentDeviceId.ToString());
             Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
 
             await request.SendWebRequest();
@@ -79,8 +85,6 @@ namespace YourGameClient
             using var request = UnityWebRequest.Get($"{apiRootUrl}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}");
             request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
             request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
-            request.SetRequestHeader("PlayerId", CurrentPlayerId.ToString());
-            request.SetRequestHeader("DeviceId", CurrentDeviceId.ToString());
             Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
 
             await request.SendWebRequest();
@@ -104,15 +108,54 @@ namespace YourGameClient
             return null;
         }
 
-        public static async UniTask<UnityWebRequest.Result> LogIn()
+        public static async UniTask<bool> SignUp()
         {
-            if(!PlayerPrefs.HasKey(prefPlayerIdKey)) return UnityWebRequest.Result.ProtocolError;
+            var channel = new Grpc.Core.Channel(serverAddr, serverRpcPort, ChannelCredentials.Insecure);
+            var client = MagicOnionClient.Create<IAccountService>(channel);
+            var result = await client.SignUp(new SignInRequest {
+#if UNITY_IOS
+                DeviceType = YourGameServer.Models.DeviceType.IOS,
+#elif UNITY_ANDROID
+                DeviceType = YourGameServer.Models.DeviceType.Android,
+#elif UNITY_WEBGL
+                DeviceType = YourGameServer.Models.DeviceType.WebGL,
+#else
+                DeviceType = YourGameServer.Models.DeviceType.StandAlone,
+#endif
+                DeviceId = SystemInfo.deviceUniqueIdentifier
+            });
+            //request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
+            //await request.SendWebRequest();
+            if(result != null) {
+                Log.Info($"SignUp : {result}");
+                CurrentPlayerId = result.Id;
+                CurrentDeviceId = result.DeviceId;
+                CurrentSecurityToken = result.Token;
+                PlayerPrefs.SetString(prefPlayerIdKey, result.Id.ToString());
+                PlayerPrefs.SetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
+                PlayerPrefs.Save();
+                return true;
+            }
+            else {
+                Log.Error($"NewAccount : failed");
+            }
+            return false;
+        }
+
+        public static async UniTask<bool> LogIn()
+        {
+            if(!PlayerPrefs.HasKey(prefPlayerIdKey)) return false;
 
             var PlayerId = ulong.Parse(PlayerPrefs.GetString(prefPlayerIdKey));
             var deviceId = PlayerPrefs.GetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
             var newDeviceId = SystemInfo.deviceUniqueIdentifier != deviceId ? SystemInfo.deviceUniqueIdentifier : null;
 
-            using var request = NewPostRequest($"{apiRootUrl}/token", new TokenRequest {
+            //var channel = GrpcChannel.ForAddress($"https://{serverAddr}:{serverRpcPort}", new GrpcChannelOptions {
+            //    HttpHandler = new GrpcWebHandler(new HttpClientHandler())
+            //});
+            var channel = new Grpc.Core.Channel(serverAddr, serverRpcPort, ChannelCredentials.Insecure);
+            var client = MagicOnionClient.Create<IAccountService>(channel);
+            var result = await client.LogIn(new LogInRequest {
                 Id = PlayerId,
 #if UNITY_IOS
                 DeviceType = YourGameServer.Models.DeviceType.IOS,
@@ -126,75 +169,46 @@ namespace YourGameClient
                 DeviceId = deviceId,
                 NewDeviceId = newDeviceId
             });
-            request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
-            await request.SendWebRequest();
-            if(request.error == null) {
-                Log.Info($"LogIn : Content-Type : {request.GetResponseHeader("Content-Type")}");
-                if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                    var ret = MessagePackSerializer.Deserialize<TokenRequestResult>(request.downloadHandler.data);
-                    CurrentPlayerId = PlayerId;
-                    CurrentDeviceId = ret.DeviceId;
-                    CurrentSecurityToken = ret.Token;
-                }
-                else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
-                    Log.Info($"source json : {request.downloadHandler.text}");
-                    var ret = Newtonsoft.Json.JsonConvert.DeserializeObject<TokenRequestResult>(request.downloadHandler.text);
-                    CurrentPlayerId = PlayerId;
-                    CurrentDeviceId = ret.DeviceId;
-                    CurrentSecurityToken = ret.Token;
-                }
-                else if(request.GetResponseHeader("Content-Type").Contains("text/plain")) {
-                    Log.Error($"LogIn : Unknown Format");
-                    return request.result;
-                }
+            if(result != null) {
+                Log.Info($"LogIn : {result}");
+                CurrentPlayerId = PlayerId;
+                CurrentDeviceId = result.DeviceId;
+                CurrentSecurityToken = result.Token;
                 if(newDeviceId != null) {
                     PlayerPrefs.SetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
                     PlayerPrefs.Save();
                 }
+                return true;
             }
-            else {
-                Log.Error($"LogIn : {request.error}");
-            }
-            return request.result;
+            return false;
         }
 
-        public static async UniTask<UnityWebRequest.Result> NewAccount()
+        public static async UniTask<bool> RenewToken()
         {
-            using var request = NewPostRequest($"{apiRootUrl}/signup", new AccountCreationRequest {
-#if UNITY_IOS
-                DeviceType = YourGameServer.Models.DeviceType.IOS,
-#elif UNITY_ANDROID
-                DeviceType = YourGameServer.Models.DeviceType.Android,
-#elif UNITY_WEBGL
-                DeviceType = YourGameServer.Models.DeviceType.WebGL,
-#else
-                DeviceType = YourGameServer.Models.DeviceType.StandAlone,
-#endif
-                DeviceId = SystemInfo.deviceUniqueIdentifier
-            });
-            request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
-            await request.SendWebRequest();
-            if(request.error == null) {
-                AccountCreationResult ret;
-                Log.Info($"SignIn : Content-Type : {request.GetResponseHeader("Content-Type")}");
-                if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                    ret = MessagePackSerializer.Deserialize<AccountCreationResult>(request.downloadHandler.data);
-                }
-                else {
-                    Log.Info($"source json : {request.downloadHandler.text}");
-                    ret = Newtonsoft.Json.JsonConvert.DeserializeObject<AccountCreationResult>(request.downloadHandler.text);
-                }
-                CurrentPlayerId = ret.Id;
-                CurrentDeviceId = ret.DeviceId;
-                CurrentSecurityToken = ret.Token;
-                PlayerPrefs.SetString(prefPlayerIdKey, ret.Id.ToString());
-                PlayerPrefs.SetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
-                PlayerPrefs.Save();
+            //var channel = GrpcChannel.ForAddress($"https://{serverAddr}:{serverRpcPort}", new GrpcChannelOptions {
+            //    HttpHandler = new GrpcWebHandler(new HttpClientHandler())
+            //});
+            var channel = new Grpc.Core.Channel(serverAddr, serverRpcPort, ChannelCredentials.Insecure);
+            var client = MagicOnionClient.Create<IAccountService>(channel, new IClientFilter[] { new AppendHeaderFilter() });
+            var result = await client.RenewToken();
+            if(result != null) {
+                Log.Info($"RenewToken : {result}");
+                CurrentSecurityToken = result.Token;
+                return true;
             }
-            else {
-                Log.Error($"NewAccount : {request.error}");
-            }
-            return request.result;
+            return false;
+        }
+    }
+
+    public class AppendHeaderFilter : IClientFilter
+    {
+        public async ValueTask<ResponseContext> SendAsync(RequestContext context, Func<RequestContext, ValueTask<ResponseContext>> next)
+        {
+            // add the common header(like authentication).
+            var header = context.CallOptions.Headers;
+            header.Add("Authorization", $"Bearer {Request.CurrentSecurityToken}");
+
+            return await next(context);
         }
     }
 }

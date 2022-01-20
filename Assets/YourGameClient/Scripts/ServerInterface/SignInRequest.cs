@@ -1,11 +1,11 @@
-using System.ComponentModel.DataAnnotations.Schema;
+#nullable disable
 using MessagePack;
+using YourGameServer.Models;
 
-namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet
+namespace YourGameServer.Interface // Unity cannot accpect 'namespace YourProjectName.Models;' yet
 {
-    [NotMapped]
     [MessagePackObject]
-    public record AccountCreationRequest
+    public record SignInRequest
     {
         [Key(0)]
         public DeviceType DeviceType { get; init; }
@@ -14,9 +14,8 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         // 何らかのOpenIDを色々受け付ける
     }
 
-    [NotMapped]
     [MessagePackObject]
-    public record AccountCreationResult
+    public record SignInRequestResult
     {
         [Key(0)]
         public ulong Id { get; init; }

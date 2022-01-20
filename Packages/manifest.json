@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.cysharp.magiconion": "https://github.com/Cysharp/MagicOnion.git?path=src/MagicOnion.Client.Unity/Assets/Scripts/MagicOnion#4.3.1",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.2.5",
     "com.neuecc.messagepack": "https://github.com/SAM-tak/MessagePack-CSharp.git?path=src/MessagePack.UnityClient/Assets/Scripts/MessagePack#v2.3.86",
     "com.unity.addressables": "1.19.17",
@@ -15,7 +16,7 @@
     "com.unity.timeline": "1.6.3",
     "com.unity.ugui": "1.0.0",
     "com.unity.visualscripting": "1.7.6",
-    "net.sam-tak.customunity": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.3",
+    "net.sam-tak.customunity": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.4",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
