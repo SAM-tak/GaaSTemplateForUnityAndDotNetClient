@@ -1,16 +1,19 @@
+using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using Grpc.Core;
-using MagicOnion.Client;
 using UnityEngine;
 using UnityEngine.Networking;
 using Cysharp.Threading.Tasks;
+using Grpc.Core;
+using Grpc.Net.Client;
+using MagicOnion.Client;
 using MessagePack;
 using CustomUnity;
 using YourGameServer.Models;
 using YourGameServer.Interface;
-using System.Threading.Tasks;
-using System;
+using Grpc.Net.Client.Web;
+using System.Net.Http;
 
 namespace YourGameClient
 {
@@ -19,6 +22,7 @@ namespace YourGameClient
         public const string serverAddr = "localhost";
         public const int serverPort = 7142;
         public const int serverRpcPort = 5019;
+        public const int serverTslRpcPort = 7143;
         public static readonly string apiRootUrl = $"https://{serverAddr}:{serverPort}/api";
 
         public const string prefPrefix = "com.yourorg.yourgame.";
@@ -124,8 +128,6 @@ namespace YourGameClient
 #endif
                 DeviceId = SystemInfo.deviceUniqueIdentifier
             });
-            //request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
-            //await request.SendWebRequest();
             if(result != null) {
                 Log.Info($"SignUp : {result}");
                 CurrentPlayerId = result.Id;
@@ -150,9 +152,15 @@ namespace YourGameClient
             var deviceId = PlayerPrefs.GetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
             var newDeviceId = SystemInfo.deviceUniqueIdentifier != deviceId ? SystemInfo.deviceUniqueIdentifier : null;
 
-            //var channel = GrpcChannel.ForAddress($"https://{serverAddr}:{serverRpcPort}", new GrpcChannelOptions {
-            //    HttpHandler = new GrpcWebHandler(new HttpClientHandler())
+            //var channel = GrpcChannel.ForAddress($"https://{serverAddr}:{serverPort}", new GrpcChannelOptions {
+            //    HttpHandler = new GrpcWebHandler(new HttpClientHandler()),
             //});
+
+            //var httpHandler = new HttpClientHandler {
+            //    // Return `true` to allow certificates that are untrusted/invalid
+            //    ServerCertificateCustomValidationCallback = (x, y, z, w) => true
+            //};
+            //var channel = GrpcChannel.ForAddress($"https://{serverAddr}:{serverTslRpcPort}", new GrpcChannelOptions { HttpHandler = httpHandler });
             var channel = new Grpc.Core.Channel(serverAddr, serverRpcPort, ChannelCredentials.Insecure);
             var client = MagicOnionClient.Create<IAccountService>(channel);
             var result = await client.LogIn(new LogInRequest {
@@ -185,9 +193,7 @@ namespace YourGameClient
 
         public static async UniTask<bool> RenewToken()
         {
-            //var channel = GrpcChannel.ForAddress($"https://{serverAddr}:{serverRpcPort}", new GrpcChannelOptions {
-            //    HttpHandler = new GrpcWebHandler(new HttpClientHandler())
-            //});
+            //var channel = new Grpc.Core.Channel(serverAddr, serverTslRpcPort, ChannelCredentials.SecureSsl);
             var channel = new Grpc.Core.Channel(serverAddr, serverRpcPort, ChannelCredentials.Insecure);
             var client = MagicOnionClient.Create<IAccountService>(channel, new IClientFilter[] { new AppendHeaderFilter() });
             var result = await client.RenewToken();
