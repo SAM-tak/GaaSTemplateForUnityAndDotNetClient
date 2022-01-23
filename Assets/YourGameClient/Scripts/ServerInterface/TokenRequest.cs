@@ -1,6 +1,6 @@
 #nullable disable
+using System; // Unity needs this
 using MessagePack;
-using YourGameServer.Models;
 
 namespace YourGameServer.Interface // Unity cannot accpect 'namespace YourProjectName.Models;' yet
 {
@@ -9,5 +9,7 @@ namespace YourGameServer.Interface // Unity cannot accpect 'namespace YourProjec
     {
         [Key(0)]
         public string Token { get; init; }
+        [Key(1)]
+        public DateTime Period { get; init; }
     }
 }

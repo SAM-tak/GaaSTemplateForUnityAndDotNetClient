@@ -1,6 +1,5 @@
 #nullable disable
 using System; // Unity needs this
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 #if UNITY_5_3_OR_NEWER
 using Newtonsoft.Json;

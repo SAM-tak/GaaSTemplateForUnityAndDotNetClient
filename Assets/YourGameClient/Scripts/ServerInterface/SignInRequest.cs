@@ -1,4 +1,5 @@
 #nullable disable
+using System; // Unity needs this
 using MessagePack;
 using YourGameServer.Models;
 
@@ -20,8 +21,8 @@ namespace YourGameServer.Interface // Unity cannot accpect 'namespace YourProjec
         [Key(0)]
         public ulong Id { get; init; }
         [Key(1)]
-        public ulong DeviceId { get; init; } // PlayerDevice Table index
-        [Key(2)]
         public string Token { get; init; }
+        [Key(2)]
+        public DateTime Period { get; init; }
     }
 }

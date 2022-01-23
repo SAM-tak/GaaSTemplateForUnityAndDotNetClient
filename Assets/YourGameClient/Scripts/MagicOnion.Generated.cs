@@ -122,21 +122,25 @@ namespace YourGameServer.Interface {
     [Ignore]
     public class AccountServiceClient : MagicOnionClientBase<global::YourGameServer.Interface.IAccountService>, global::YourGameServer.Interface.IAccountService
     {
-        static readonly Method<byte[], byte[]> LogInMethod;
-        static readonly Func<RequestContext, ResponseContext> LogInDelegate;
         static readonly Method<byte[], byte[]> SignUpMethod;
         static readonly Func<RequestContext, ResponseContext> SignUpDelegate;
+        static readonly Method<byte[], byte[]> LogInMethod;
+        static readonly Func<RequestContext, ResponseContext> LogInDelegate;
         static readonly Method<byte[], byte[]> RenewTokenMethod;
         static readonly Func<RequestContext, ResponseContext> RenewTokenDelegate;
+        static readonly Method<byte[], byte[]> LogOutMethod;
+        static readonly Func<RequestContext, ResponseContext> LogOutDelegate;
 
         static AccountServiceClient()
         {
-            LogInMethod = new Method<byte[], byte[]>(MethodType.Unary, "IAccountService", "LogIn", MagicOnionMarshallers.ThroughMarshaller, MagicOnionMarshallers.ThroughMarshaller);
-            LogInDelegate = _LogIn;
             SignUpMethod = new Method<byte[], byte[]>(MethodType.Unary, "IAccountService", "SignUp", MagicOnionMarshallers.ThroughMarshaller, MagicOnionMarshallers.ThroughMarshaller);
             SignUpDelegate = _SignUp;
+            LogInMethod = new Method<byte[], byte[]>(MethodType.Unary, "IAccountService", "LogIn", MagicOnionMarshallers.ThroughMarshaller, MagicOnionMarshallers.ThroughMarshaller);
+            LogInDelegate = _LogIn;
             RenewTokenMethod = new Method<byte[], byte[]>(MethodType.Unary, "IAccountService", "RenewToken", MagicOnionMarshallers.ThroughMarshaller, MagicOnionMarshallers.ThroughMarshaller);
             RenewTokenDelegate = _RenewToken;
+            LogOutMethod = new Method<byte[], byte[]>(MethodType.Unary, "IAccountService", "LogOut", MagicOnionMarshallers.ThroughMarshaller, MagicOnionMarshallers.ThroughMarshaller);
+            LogOutDelegate = _LogOut;
         }
 
         AccountServiceClient()
@@ -184,15 +188,6 @@ namespace YourGameServer.Interface {
             return base.WithOptions(option);
         }
    
-        static ResponseContext _LogIn(RequestContext __context)
-        {
-            return CreateResponseContext<LogInRequest, LogInRequestResult>(__context, LogInMethod);
-        }
-
-        public global::MagicOnion.UnaryResult<LogInRequestResult> LogIn(LogInRequest param)
-        {
-            return InvokeAsync<LogInRequest, LogInRequestResult>("IAccountService/LogIn", param, LogInDelegate);
-        }
         static ResponseContext _SignUp(RequestContext __context)
         {
             return CreateResponseContext<SignInRequest, SignInRequestResult>(__context, SignUpMethod);
@@ -202,6 +197,15 @@ namespace YourGameServer.Interface {
         {
             return InvokeAsync<SignInRequest, SignInRequestResult>("IAccountService/SignUp", signup, SignUpDelegate);
         }
+        static ResponseContext _LogIn(RequestContext __context)
+        {
+            return CreateResponseContext<LogInRequest, LogInRequestResult>(__context, LogInMethod);
+        }
+
+        public global::MagicOnion.UnaryResult<LogInRequestResult> LogIn(LogInRequest param)
+        {
+            return InvokeAsync<LogInRequest, LogInRequestResult>("IAccountService/LogIn", param, LogInDelegate);
+        }
         static ResponseContext _RenewToken(RequestContext __context)
         {
             return CreateResponseContext<RenewTokenRequestResult>(__context, RenewTokenMethod);
@@ -210,6 +214,15 @@ namespace YourGameServer.Interface {
         public global::MagicOnion.UnaryResult<RenewTokenRequestResult> RenewToken()
         {
             return InvokeAsync<Nil, RenewTokenRequestResult>("IAccountService/RenewToken", Nil.Default, RenewTokenDelegate);
+        }
+        static ResponseContext _LogOut(RequestContext __context)
+        {
+            return CreateResponseContext<global::MessagePack.Nil>(__context, LogOutMethod);
+        }
+
+        public global::MagicOnion.UnaryResult<global::MessagePack.Nil> LogOut()
+        {
+            return InvokeAsync<Nil, global::MessagePack.Nil>("IAccountService/LogOut", Nil.Default, LogOutDelegate);
         }
     }
 }

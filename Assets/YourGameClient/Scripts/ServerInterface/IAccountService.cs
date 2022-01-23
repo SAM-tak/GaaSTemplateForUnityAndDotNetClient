@@ -1,5 +1,6 @@
 #nullable disable
 using MagicOnion;
+using MessagePack;
 
 namespace YourGameServer.Interface
 {
@@ -7,9 +8,30 @@ namespace YourGameServer.Interface
     // The interface is shared between server and client.
     public interface IAccountService : IService<IAccountService>
     {
-        // The return type must be `UnaryResult<T>`.
-        UnaryResult<LogInRequestResult> LogIn(LogInRequest param);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="signup"></param>
+        /// <returns></returns>
         UnaryResult<SignInRequestResult> SignUp(SignInRequest signup);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        UnaryResult<LogInRequestResult> LogIn(LogInRequest param);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         UnaryResult<RenewTokenRequestResult> RenewToken();
+
+        /// <summary>
+        /// Log out
+        /// </summary>
+        /// <returns>none</returns>
+        UnaryResult<Nil> LogOut();
     }
 }

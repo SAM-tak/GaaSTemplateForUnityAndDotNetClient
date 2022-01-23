@@ -1,5 +1,4 @@
 #nullable disable
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectName.Models;' yet

@@ -325,8 +325,8 @@ namespace MessagePack.Formatters.YourGameServer.Interface
 
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             writer.WriteArrayHeader(2);
-            writer.Write(value.DeviceId);
             formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.Token, options);
+            formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Serialize(ref writer, value.Period, options);
         }
 
         public global::YourGameServer.Interface.LogInRequestResult Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
@@ -339,18 +339,18 @@ namespace MessagePack.Formatters.YourGameServer.Interface
             options.Security.DepthStep(ref reader);
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
-            var __DeviceId__ = default(ulong);
             var __Token__ = default(string);
+            var __Period__ = default(global::System.DateTime);
 
             for (int i = 0; i < length; i++)
             {
                 switch (i)
                 {
                     case 0:
-                        __DeviceId__ = reader.ReadUInt64();
+                        __Token__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 1:
-                        __Token__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __Period__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Deserialize(ref reader, options);
                         break;
                     default:
                         reader.Skip();
@@ -359,8 +359,8 @@ namespace MessagePack.Formatters.YourGameServer.Interface
             }
 
             var ____result = new global::YourGameServer.Interface.LogInRequestResult() {
-                DeviceId = __DeviceId__,
                 Token = __Token__,
+                Period = __Period__,
             };
             reader.Depth--;
             return ____result;
@@ -378,8 +378,9 @@ namespace MessagePack.Formatters.YourGameServer.Interface
             }
 
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
-            writer.WriteArrayHeader(1);
+            writer.WriteArrayHeader(2);
             formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.Token, options);
+            formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Serialize(ref writer, value.Period, options);
         }
 
         public global::YourGameServer.Interface.RenewTokenRequestResult Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
@@ -393,6 +394,7 @@ namespace MessagePack.Formatters.YourGameServer.Interface
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
             var __Token__ = default(string);
+            var __Period__ = default(global::System.DateTime);
 
             for (int i = 0; i < length; i++)
             {
@@ -400,6 +402,9 @@ namespace MessagePack.Formatters.YourGameServer.Interface
                 {
                     case 0:
                         __Token__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        break;
+                    case 1:
+                        __Period__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Deserialize(ref reader, options);
                         break;
                     default:
                         reader.Skip();
@@ -409,6 +414,7 @@ namespace MessagePack.Formatters.YourGameServer.Interface
 
             var ____result = new global::YourGameServer.Interface.RenewTokenRequestResult() {
                 Token = __Token__,
+                Period = __Period__,
             };
             reader.Depth--;
             return ____result;
@@ -482,8 +488,8 @@ namespace MessagePack.Formatters.YourGameServer.Interface
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             writer.WriteArrayHeader(3);
             writer.Write(value.Id);
-            writer.Write(value.DeviceId);
             formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.Token, options);
+            formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Serialize(ref writer, value.Period, options);
         }
 
         public global::YourGameServer.Interface.SignInRequestResult Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
@@ -497,8 +503,8 @@ namespace MessagePack.Formatters.YourGameServer.Interface
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
             var __Id__ = default(ulong);
-            var __DeviceId__ = default(ulong);
             var __Token__ = default(string);
+            var __Period__ = default(global::System.DateTime);
 
             for (int i = 0; i < length; i++)
             {
@@ -508,10 +514,10 @@ namespace MessagePack.Formatters.YourGameServer.Interface
                         __Id__ = reader.ReadUInt64();
                         break;
                     case 1:
-                        __DeviceId__ = reader.ReadUInt64();
+                        __Token__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 2:
-                        __Token__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __Period__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Deserialize(ref reader, options);
                         break;
                     default:
                         reader.Skip();
@@ -521,8 +527,8 @@ namespace MessagePack.Formatters.YourGameServer.Interface
 
             var ____result = new global::YourGameServer.Interface.SignInRequestResult() {
                 Id = __Id__,
-                DeviceId = __DeviceId__,
                 Token = __Token__,
+                Period = __Period__,
             };
             reader.Depth--;
             return ____result;

@@ -33,6 +33,8 @@ namespace YourGameClient
 
             var newToken = await Request.RenewToken();
             LogInfo($"newToken : {newToken}");
+
+            //await Request.LogOut();
         }
 
         // Update is called once per frame

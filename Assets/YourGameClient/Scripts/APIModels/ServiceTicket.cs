@@ -1,8 +1,5 @@
 #nullable disable
-using System; // Unity needs this
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using MessagePack;
 using KeyAttribute = MessagePack.KeyAttribute;
 
