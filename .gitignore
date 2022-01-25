@@ -82,3 +82,6 @@ crashlytics-build.properties
 .fake
 Assets/Packages/*
 !.gitkeep
+
+Assets/StreamingAssets/ca.crt
+Assets/StreamingAssets/ca.crt.meta
