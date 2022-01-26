@@ -46,6 +46,18 @@ namespace YourGameClient
             new(serverAddr, serverRpcPort, ChannelCredentials.Insecure)
         ));
 #endif
+        public const YourGameServer.Models.DeviceType deviceType =
+#if UNITY_IOS
+            YourGameServer.Models.DeviceType.IOS
+#elif UNITY_ANDROID
+            YourGameServer.Models.DeviceType.Android
+#elif UNITY_WEBGL
+            YourGameServer.Models.DeviceType.WebGL
+#else
+            YourGameServer.Models.DeviceType.StandAlone
+#endif
+        ;
+
         public static GrpcChannelx GlobalChannel => globalChannel.Value;
 
         public const string prefPrefix = "com.yourorg.yourgame.";
@@ -109,7 +121,7 @@ namespace YourGameClient
             return null;
         }
 
-        public static async UniTask<IEnumerable<MaskedPlayerAccount>> GetPlayerAccounts(long[] ids)
+        public static async UniTask<IEnumerable<MaskedPlayerAccount>> GetPlayerAccounts(ulong[] ids)
         {
             using var request = UnityWebRequest.Get($"{apiRootUrl}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}");
             request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
@@ -141,15 +153,7 @@ namespace YourGameClient
         {
             var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
             var result = await client.SignUp(new SignInRequest {
-#if UNITY_IOS
-                DeviceType = YourGameServer.Models.DeviceType.IOS,
-#elif UNITY_ANDROID
-                DeviceType = YourGameServer.Models.DeviceType.Android,
-#elif UNITY_WEBGL
-                DeviceType = YourGameServer.Models.DeviceType.WebGL,
-#else
-                DeviceType = YourGameServer.Models.DeviceType.StandAlone,
-#endif
+                DeviceType = deviceType,
                 DeviceId = SystemInfo.deviceUniqueIdentifier
             });
             if(result != null) {
@@ -178,15 +182,7 @@ namespace YourGameClient
             var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
             var result = await client.LogIn(new LogInRequest {
                 Id = PlayerId,
-#if UNITY_IOS
-                DeviceType = YourGameServer.Models.DeviceType.IOS,
-#elif UNITY_ANDROID
-                DeviceType = YourGameServer.Models.DeviceType.Android,
-#elif UNITY_WEBGL
-                DeviceType = YourGameServer.Models.DeviceType.WebGL,
-#else
-                DeviceType = YourGameServer.Models.DeviceType.StandAlone,
-#endif
+                DeviceType = deviceType,
                 DeviceId = deviceId,
                 NewDeviceId = newDeviceId
             });

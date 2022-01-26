@@ -10,7 +10,7 @@ namespace YourGameClient
         public Request.ContentType accept;
         public Request.ContentType contentType;
 
-        public long[] ids = new[] { 1L, 2L, 3L, 4L, 5L };
+        public ulong[] ids = new[] { 1UL, 2UL, 3UL, 4UL, 5UL };
 
         // Start is called before the first frame update
         async void Start()
