@@ -1,7 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
+using UnityEngine.UI;
 
 namespace YourGameClient
 {
@@ -12,10 +13,22 @@ namespace YourGameClient
 
         public ulong[] ids = new[] { 1UL, 2UL, 3UL, 4UL, 5UL };
 
+        public Button startButton;
+
         // Start is called before the first frame update
         async void Start()
         {
             LogInfo($"deviceUniqueIdentifier : {SystemInfo.deviceUniqueIdentifier}");
+
+            while(!FirebaseInitializer.Done) await UniTask.NextFrame();
+
+            LogInfo("Wait for Start Button Push");
+
+            startButton.interactable = true;
+
+            while(!start) await UniTask.NextFrame();
+
+            LogInfo("Start");
 
             if(!await Request.LogIn() && !await Request.SignUp()) return;
 
@@ -31,16 +44,53 @@ namespace YourGameClient
             LogInfo($"rejason by Newtonsoft : {Newtonsoft.Json.JsonConvert.SerializeObject(playerAccount)}"); // OK
             // JsonUtility非力すぎるのでNewtonsoft.Json使うしかない
 
+            await Task.Delay(1000);
+
             var newToken = await Request.RenewToken();
             LogInfo($"newToken : {newToken}");
 
-            //await Request.LogOut();
+            await Task.Delay(1000);
+
+            await Request.LogOut();
+
+            done = true;
         }
+
+        bool start;
+
+        public void StartProc()
+        {
+            LogInfo("StartProc");
+            start = true;
+        }
+
+        bool done;
 
         // Update is called once per frame
         void Update()
         {
+            // Call the exception-throwing method here so that it's run
+            // every frame update
+            if (done) ThrowExceptionEvery60Updates();
+        }
 
+        int updatesBeforeException = 60;
+
+        // A method that tests your Crashlytics implementation by throwing an
+        // exception every 60 frame updates. You should see non-fatal errors in the
+        // Firebase console a few minutes after running your app with this method.
+        void ThrowExceptionEvery60Updates()
+        {
+            if(updatesBeforeException > 0) {
+                updatesBeforeException--;
+            }
+            else {
+                // Set the counter to 60 updates
+                updatesBeforeException = 60;
+
+                // Throw an exception to test your Crashlytics implementation
+                throw new Exception("test exception please ignore");
+            }
         }
     }
 }

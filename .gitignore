@@ -17,6 +17,8 @@
 # Recordings can get excessive in size
 /[Rr]ecordings/
 
+/[Ss]creenshots/
+
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*
 
@@ -68,8 +70,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 
 # Temporary auto-generated Android Assets
-/[Aa]ssets/[Ss]treamingAssets/aa.meta
-/[Aa]ssets/[Ss]treamingAssets/aa/*
+/[Aa]ssets/[Ss]treaming[Aa]ssets/aa.meta
+/[Aa]ssets/[Ss]treaming[Aa]ssets/aa/*
 
 /[Aa]ssets/[Aa]daptive\ [Pp]erformance/
 /[Aa]ssets/[Aa]daptive\ [Pp]erformance.meta
@@ -80,8 +82,21 @@ crashlytics-build.properties
 .config/
 
 .fake
-Assets/Packages/*
+/[Aa]ssets/Packages/*
 !.gitkeep
 
-Assets/StreamingAssets/ca.crt
-Assets/StreamingAssets/ca.crt.meta
+/[Aa]ssets/StreamingAssets/ca.crt
+/[Aa]ssets/StreamingAssets/ca.crt.meta
+
+/[Aa]ssets/google-services.json
+/[Aa]ssets/google-services.json.meta
+/[Aa]ssets/GoogleService-Info.plist
+/[Aa]ssets/GoogleService-Info.plist.meta
+/[Aa]ssets/[Ss]treaming[Aa]ssets/google-services-desktop.json
+/[Aa]ssets/[Ss]treaming[Aa]ssets/google-services-desktop.json.meta
+/[Aa]ssets/[Pp]lugins/Android/Firebase*.androidlib
+/[Aa]ssets/[Pp]lugins/Android/Firebase*.androidlib.meta
+/[Aa]ssets/[Pp]lugins/Android/androidx.*
+/[Aa]ssets/[Pp]lugins/Android/com.google.android.*
+/[Aa]ssets/[Pp]lugins/Android/com.google.firebase.*
+/[Aa]ssets/[Pp]lugins/Android/javax.inject.*

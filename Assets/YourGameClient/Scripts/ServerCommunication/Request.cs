@@ -24,27 +24,44 @@ namespace YourGameClient
 {
     public static class Request
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        public const string serverAddr = "10.0.2.2";
+#else
         public const string serverAddr = "localhost";
+#endif
         public const int serverPort = 7142;
         public static readonly string apiRootUrl = $"https://{serverAddr}:{serverPort}/api";
 #if USE_RPC_TSL
         public const int serverRpcPort = 7143;
 # if USE_DEV_CERT
-        static readonly Lazy<GrpcChannelx> globalChannel = new(() => GrpcChannelx.ForTarget(
-            new(serverAddr, serverRpcPort, new SslCredentials(File.ReadAllText(
-                Path.Combine(Application.streamingAssetsPath, "ca.crt")
-            )))
-        ));
+#  if UNITY_ANDROID && !UNITY_EDITOR
+        static readonly AsyncLazy<GrpcChannelx> globalChannel = new(async () => {
+            Log.Info($"ReadDevCert {Path.Combine(Application.streamingAssetsPath, "ca.crt")}");
+            var request = UnityWebRequest.Get(Path.Combine(Application.streamingAssetsPath, "ca.crt"));
+            Log.Info("request.SendWebRequest");
+            await request.SendWebRequest();
+            Log.Info($"request.SendWebRequest end serverAddr = {serverAddr} serverRpcPort = {serverRpcPort} sert = {request.downloadHandler.text}");
+            return GrpcChannelx.ForTarget(new(serverAddr, serverRpcPort, new SslCredentials(request.downloadHandler.text)));
+        });
+#  else
+        static readonly AsyncLazy<GrpcChannelx> globalChannel = new(async () => {
+            return GrpcChannelx.ForTarget(
+                new(serverAddr, serverRpcPort, new SslCredentials(await File.ReadAllTextAsync(Path.Combine(Application.streamingAssetsPath, "ca.crt"))))
+            );
+         });
+#  endif
 # else
-        static readonly Lazy<GrpcChannelx> globalChannel = new(() => GrpcChannelx.ForTarget(
-            new(serverAddr, serverRpcPort, ChannelCredentials.SecureSsl)
-        ));
+        static readonly AsyncLazy<GrpcChannelx> globalChannel = new(async () => {
+            await UniTask.CompletedTask;
+            return GrpcChannelx.ForTarget(new(serverAddr, serverRpcPort, ChannelCredentials.SecureSsl));
+        });
 # endif
 #else
         public const int serverRpcPort = 5019;
-        static readonly Lazy<GrpcChannelx> globalChannel = new(() => GrpcChannelx.ForTarget(
-            new(serverAddr, serverRpcPort, ChannelCredentials.Insecure)
-        ));
+        static readonly AsyncLazy<GrpcChannelx> globalChannel = new(async () => {
+            await UniTask.CompletedTask;
+            return GrpcChannelx.ForTarget(new(serverAddr, serverRpcPort, ChannelCredentials.Insecure));
+        });
 #endif
         public const YourGameServer.Models.DeviceType deviceType =
 #if UNITY_IOS
@@ -57,8 +74,6 @@ namespace YourGameClient
             YourGameServer.Models.DeviceType.StandAlone
 #endif
         ;
-
-        public static GrpcChannelx GlobalChannel => globalChannel.Value;
 
         public const string prefPrefix = "com.yourorg.yourgame.";
         public const string prefPlayerIdKey = prefPrefix + "playerid";
@@ -151,11 +166,13 @@ namespace YourGameClient
 
         public static async UniTask<bool> SignUp()
         {
-            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
+            var client = MagicOnionClient.Create<IAccountService>(await globalChannel);
+            Log.Info("SignUp : Call");
             var result = await client.SignUp(new SignInRequest {
                 DeviceType = deviceType,
                 DeviceId = SystemInfo.deviceUniqueIdentifier
             });
+            Log.Info("SignUp : Call End");
             if(result != null) {
                 Log.Info($"SignUp : {result}");
                 CurrentPlayerId = result.Id;
@@ -176,19 +193,21 @@ namespace YourGameClient
         {
             if(!PlayerPrefs.HasKey(prefPlayerIdKey)) return false;
 
-            var PlayerId = ulong.Parse(PlayerPrefs.GetString(prefPlayerIdKey));
+            var playerId = ulong.Parse(PlayerPrefs.GetString(prefPlayerIdKey));
             var deviceId = PlayerPrefs.GetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
             var newDeviceId = SystemInfo.deviceUniqueIdentifier != deviceId ? SystemInfo.deviceUniqueIdentifier : null;
-            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
+            var client = MagicOnionClient.Create<IAccountService>(await globalChannel);
+            Log.Info("LogIn : Call");
             var result = await client.LogIn(new LogInRequest {
-                Id = PlayerId,
+                Id = playerId,
                 DeviceType = deviceType,
                 DeviceId = deviceId,
                 NewDeviceId = newDeviceId
             });
+            Log.Info("LogIn : End");
             if(result != null) {
                 Log.Info($"LogIn : {result}");
-                CurrentPlayerId = PlayerId;
+                CurrentPlayerId = playerId;
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
                 if(newDeviceId != null) {
@@ -202,7 +221,7 @@ namespace YourGameClient
 
         public static async UniTask<bool> RenewToken()
         {
-            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
+            var client = MagicOnionClient.Create<IAccountService>(await globalChannel, new IClientFilter[] { new AppendHeaderFilter() });
             var result = await client.RenewToken();
             if(result != null) {
                 Log.Info($"RenewToken : {result}");
@@ -212,10 +231,10 @@ namespace YourGameClient
             }
             return false;
         }
-
+        
         public static async UniTask LogOut()
         {
-            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
+            var client = MagicOnionClient.Create<IAccountService>(await globalChannel, new IClientFilter[] { new AppendHeaderFilter() });
             await client.LogOut();
             Log.Info("LogOut");
         }

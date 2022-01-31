@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace YourGameClient
 {
-    public static class MagicOnionInitializer
+    static class MagicOnionInitializer
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        public static void OnRuntimeInitialize()
+        static void OnRuntimeInitialize()
         {
             // Initialize gRPC channel provider when the application is loaded.
             GrpcChannelProviderHost.Initialize(new DefaultGrpcChannelProvider(new[] {

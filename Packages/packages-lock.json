@@ -31,6 +31,15 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.adaptiveperformance.samsung.android": {
+      "version": "3.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.adaptiveperformance": "3.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.addressables": {
       "version": "1.19.17",
       "depth": 0,
@@ -46,11 +55,10 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "1.15.9",
+      "version": "1.15.12",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "2.0.0",
         "com.unity.services.core": "1.0.1"
       },
       "url": "https://packages.unity.com"
@@ -73,7 +81,7 @@
       }
     },
     "com.unity.ide.rider": {
-      "version": "3.0.10",
+      "version": "3.0.12",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -95,6 +103,15 @@
       "depth": 0,
       "source": "registry",
       "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.inputsystem": {
+      "version": "1.2.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.uielements": "1.0.0"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.localization": {
@@ -197,7 +214,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.6.3",
+      "version": "1.6.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -228,11 +245,11 @@
       "url": "https://packages.unity.com"
     },
     "net.sam-tak.customunity": {
-      "version": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.4",
+      "version": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.5",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "48baa6fe9885a510f8a5433f9f4cf6b6268184d8"
+      "hash": "b9e8ba4af05a2870da22506206c0e0c218cb189a"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
