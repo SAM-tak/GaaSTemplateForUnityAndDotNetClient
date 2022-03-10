@@ -12,10 +12,11 @@ namespace YourGameClient
         public static void Initialize()
         {
             StaticCompositeResolver.Instance.Register(
-                GeneratedResolver.Instance,
+                BuiltinResolver.Instance,
                 UnityResolver.Instance,
                 UnityBlitWithPrimitiveArrayResolver.Instance,
-                StandardResolver.Instance
+                GeneratedResolver.Instance,
+                MessagePack.CustomResolver.Instance
             );
             MessagePackSerializer.DefaultOptions = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray).WithResolver(StaticCompositeResolver.Instance);
         }

@@ -1,18 +1,48 @@
 {
   "dependencies": {
     "com.cysharp.magiconion": {
-      "version": "https://github.com/Cysharp/MagicOnion.git?path=src/MagicOnion.Client.Unity/Assets/Scripts/MagicOnion#4.3.1",
+      "version": "4.4.0",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {},
-      "hash": "b677bb887ad1311ce9b0b3a999e3e3463edb25a3"
+      "url": "https://package.openupm.com"
     },
     "com.cysharp.unitask": {
-      "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.2.5",
+      "version": "2.3.1",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {},
-      "hash": "72e620d169841f32bc6110ad0e12ee9eae6f1aaf"
+      "url": "https://package.openupm.com"
+    },
+    "com.google.external-dependency-manager": {
+      "version": "file:com.google.external-dependency-manager-1.2.169.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {}
+    },
+    "com.google.firebase.analytics": {
+      "version": "file:com.google.firebase.analytics-8.8.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.google.firebase.app": "8.8.0"
+      }
+    },
+    "com.google.firebase.app": {
+      "version": "file:com.google.firebase.app-8.8.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.google.external-dependency-manager": "1.2.169"
+      }
+    },
+    "com.google.firebase.crashlytics": {
+      "version": "file:com.google.firebase.crashlytics-8.8.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.google.firebase.app": "8.8.0"
+      }
     },
     "com.neuecc.messagepack": {
       "version": "https://github.com/SAM-tak/MessagePack-CSharp.git?path=src/MessagePack.UnityClient/Assets/Scripts/MessagePack#v2.3.86",
@@ -21,8 +51,15 @@
       "dependencies": {},
       "hash": "021c13bffbfe81a978961a97481f5271286a123c"
     },
+    "com.praeclarum.sqlite-net": {
+      "version": "1.7.33503",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.unity.adaptiveperformance": {
-      "version": "3.0.0",
+      "version": "4.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -32,20 +69,20 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.adaptiveperformance.samsung.android": {
-      "version": "3.0.0",
+      "version": "4.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.adaptiveperformance": "3.0.0"
+        "com.unity.adaptiveperformance": "4.0.0"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.addressables": {
-      "version": "1.19.17",
+      "version": "1.19.19",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.scriptablebuildpipeline": "1.19.5",
+        "com.unity.scriptablebuildpipeline": "1.19.6",
         "com.unity.modules.assetbundle": "1.0.0",
         "com.unity.modules.imageconversion": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0",
@@ -55,7 +92,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "1.15.12",
+      "version": "1.15.13",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -77,7 +114,7 @@
       "dependencies": {
         "com.unity.mobile.android-logcat": "1.2.3",
         "com.unity.adaptiveperformance": "3.0.0",
-        "com.unity.mobile.notifications": "1.4.2"
+        "com.unity.mobile.notifications": "2.0.0"
       }
     },
     "com.unity.ide.rider": {
@@ -99,14 +136,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.vscode": {
-      "version": "1.2.4",
+      "version": "1.2.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.inputsystem": {
-      "version": "1.2.0",
+      "version": "1.3.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -132,7 +169,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.mobile.notifications": {
-      "version": "1.4.2",
+      "version": "2.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -155,7 +192,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.purchasing": {
-      "version": "4.1.2",
+      "version": "4.1.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -169,7 +206,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.scriptablebuildpipeline": {
-      "version": "1.19.5",
+      "version": "1.19.6",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -194,7 +231,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.30",
+      "version": "1.1.31",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -235,7 +272,7 @@
       }
     },
     "com.unity.visualscripting": {
-      "version": "1.7.6",
+      "version": "1.7.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -245,11 +282,11 @@
       "url": "https://packages.unity.com"
     },
     "net.sam-tak.customunity": {
-      "version": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.5",
+      "version": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.9",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b9e8ba4af05a2870da22506206c0e0c218cb189a"
+      "hash": "7daabd8ea7b7fca14c9158abaff46e2690ab4f21"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

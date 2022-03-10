@@ -14,10 +14,13 @@ namespace YourGameClient
         public ulong[] ids = new[] { 1UL, 2UL, 3UL, 4UL, 5UL };
 
         public Button startButton;
+        public TMPro.TMP_InputField inputField;
 
         // Start is called before the first frame update
         async void Start()
         {
+            inputField.text = Request.ServerAddr;
+
             LogInfo($"deviceUniqueIdentifier : {SystemInfo.deviceUniqueIdentifier}");
 
             while(!FirebaseInitializer.Done) await UniTask.NextFrame();
@@ -29,49 +32,55 @@ namespace YourGameClient
             while(!start) await UniTask.NextFrame();
 
             LogInfo("Start");
+            done = true;
 
-            if(!await Request.LogIn() && !await Request.SignUp()) return;
+            //if(!await Request.LogIn() && !await Request.SignUp()) return;
 
-            Request.CurrentAcceptContentType = accept;
-            Request.CurrentRequestContentType = contentType;
-            var playerAccount = await Request.GetPlayerAccount();
-            LogInfo($"playerAccount : {playerAccount} {playerAccount?.Id} {playerAccount?.Since}");
-            
-            var playerAccounts = await Request.GetPlayerAccounts(ids);
-            foreach(var i in playerAccounts) LogInfo($"playerAccount : {i} {i?.Id} {i?.Since}");
+            //Request.CurrentAcceptContentType = accept;
+            //Request.CurrentRequestContentType = contentType;
+            //var playerAccount = await Request.GetPlayerAccount();
+            //LogInfo($"playerAccount : {playerAccount} {playerAccount?.Id} {playerAccount?.Since}");
 
-            LogInfo($"rejason by JsonUtility : {JsonUtility.ToJson(playerAccount)}"); // NG
-            LogInfo($"rejason by Newtonsoft : {Newtonsoft.Json.JsonConvert.SerializeObject(playerAccount)}"); // OK
+            //var playerAccounts = await Request.GetPlayerAccounts(ids);
+            //foreach(var i in playerAccounts) LogInfo($"playerAccount : {i} {i?.Id} {i?.Since}");
+
+            //LogInfo($"rejason by JsonUtility : {JsonUtility.ToJson(playerAccount)}"); // NG
+            //LogInfo($"rejason by Newtonsoft : {Newtonsoft.Json.JsonConvert.SerializeObject(playerAccount)}"); // OK
             // JsonUtility非力すぎるのでNewtonsoft.Json使うしかない
 
-            await Task.Delay(1000);
+            //await UniTask.Delay(1000);
 
-            var newToken = await Request.RenewToken();
-            LogInfo($"newToken : {newToken}");
+            //var newToken = await Request.RenewToken();
+            //LogInfo($"newToken : {newToken}");
 
-            await Task.Delay(1000);
+            //await UniTask.Delay(1000);
 
-            await Request.LogOut();
+            //await Request.LogOut();
 
             done = true;
         }
-
-        bool start;
-
-        public void StartProc()
-        {
-            LogInfo("StartProc");
-            start = true;
-        }
-
-        bool done;
 
         // Update is called once per frame
         void Update()
         {
             // Call the exception-throwing method here so that it's run
             // every frame update
-            if (done) ThrowExceptionEvery60Updates();
+            if(done) ThrowExceptionEvery60Updates2();
+        }
+
+        //async void OnDestroy()
+        //{
+        //    if(Request.IsLoggedIn) await Request.LogOut().Timeout(TimeSpan.FromSeconds(10));
+        //}
+
+        bool start;
+        bool done;
+
+        public void StartProc()
+        {
+            LogInfo("StartProc");
+            Request.ServerAddr = inputField.text;
+            start = true;
         }
 
         int updatesBeforeException = 60;
@@ -90,6 +99,20 @@ namespace YourGameClient
 
                 // Throw an exception to test your Crashlytics implementation
                 throw new Exception("test exception please ignore");
+            }
+        }
+
+        void ThrowExceptionEvery60Updates2()
+        {
+            if(updatesBeforeException > 0) {
+                updatesBeforeException--;
+            }
+            else {
+                // Set the counter to 60 updates
+                updatesBeforeException = 60;
+
+                // Throw an exception to test your Crashlytics implementation
+                throw new ApplicationException("##### test exception please ignore");
             }
         }
     }

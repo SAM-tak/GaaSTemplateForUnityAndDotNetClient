@@ -12,21 +12,28 @@ namespace YourGameClient
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void OnRuntimeInitialize()
         {
+            //Firebase.FirebaseApp.LogLevel = Firebase.LogLevel.Debug;
             Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
                 var dependencyStatus = task.Result;
                 if(dependencyStatus == Firebase.DependencyStatus.Available) {
-                    Firebase.FirebaseApp.LogLevel = Firebase.LogLevel.Debug;
 
                     // Create and hold a reference to your FirebaseApp,
                     // where app is a Firebase.FirebaseApp property of your application class.
                     // Crashlytics will use the DefaultInstance, as well;
                     // this ensures that Crashlytics is initialized.
-                    Firebase.FirebaseApp app = Firebase.FirebaseApp.DefaultInstance;
+                    var app = Firebase.FirebaseApp.DefaultInstance;
+
+                    if(Firebase.Crashlytics.Crashlytics.IsCrashlyticsCollectionEnabled) {
+                        Log.Info("Firebase Crashlytics is enable");
+                    }
+                    else {
+                        Log.Warning("Firebase Crashlytics is not enable");
+                    }
+
+                    Log.Info($"Firebase initialization finished. {app.Name}, {app.Options.AppId}");
 
                     // Set a flag here for indicating that your project is ready to use Firebase.
                     Done = true;
-
-                    Log.Info("Firebase initialization finished.");
                 }
                 else {
                     Log.Error($"Could not resolve all Firebase dependencies: {dependencyStatus}");
