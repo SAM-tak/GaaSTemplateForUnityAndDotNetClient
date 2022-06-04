@@ -1,68 +1,75 @@
-#define USE_RPC_TSL
-#if USE_RPC_TSL
-# define USE_DEV_CERT
+#if UNITY_IOS || UNITY_ANDROID && DEVELOPMENT_BUILD && !UNITY_EDITOR
+#else
+# define USE_API_TSL
+# define USE_RPC_TSL
 #endif
 using System;
-#if USE_DEV_CERT
-using System.IO;
-#endif
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using Cysharp.Threading.Tasks;
-using Grpc.Core;
 using MagicOnion;
 using MagicOnion.Client;
 using MessagePack;
 using CustomUnity;
 using YourGameServer.Models;
 using YourGameServer.Interface;
+using PlayerPrefs = CustomUnity.PlayerPrefs;
 
 namespace YourGameClient
 {
     public static class Request
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        public const string serverAddr = "10.0.2.2";
+        static string serverAddr
+#if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
+            = "192.168.11.15";
 #else
-        public const string serverAddr = "localhost";
+            = "localhost";
 #endif
+        public static string ServerAddr {
+            get => serverAddr;
+            set {
+                apiRootUrl = null;
+                if(globalChannel != null) {
+                    globalChannel.Dispose();
+                    globalChannel = null;
+                }
+                serverAddr = value;
+            }
+        }
+        static string apiRootUrl = null;
+#if USE_API_TSL
         public const int serverPort = 7142;
-        public static readonly string apiRootUrl = $"https://{serverAddr}:{serverPort}/api";
+        public const string scheme = "https";
+#else
+        public const int serverPort = 5018;
+        public const string scheme = "http";
+#endif
+        public static string ApiRootUrl {
+            get {
+                if(apiRootUrl is null) apiRootUrl = $"{scheme}://{ServerAddr}:{serverPort}/api";
+                return apiRootUrl;
+            }
+        }
 #if USE_RPC_TSL
         public const int serverRpcPort = 7143;
-# if USE_DEV_CERT
-#  if UNITY_ANDROID && !UNITY_EDITOR
-        static readonly AsyncLazy<GrpcChannelx> globalChannel = new(async () => {
-            Log.Info($"ReadDevCert {Path.Combine(Application.streamingAssetsPath, "ca.crt")}");
-            var request = UnityWebRequest.Get(Path.Combine(Application.streamingAssetsPath, "ca.crt"));
-            Log.Info("request.SendWebRequest");
-            await request.SendWebRequest();
-            Log.Info($"request.SendWebRequest end serverAddr = {serverAddr} serverRpcPort = {serverRpcPort} sert = {request.downloadHandler.text}");
-            return GrpcChannelx.ForTarget(new(serverAddr, serverRpcPort, new SslCredentials(request.downloadHandler.text)));
-        });
-#  else
-        static readonly AsyncLazy<GrpcChannelx> globalChannel = new(async () => {
-            return GrpcChannelx.ForTarget(
-                new(serverAddr, serverRpcPort, new SslCredentials(await File.ReadAllTextAsync(Path.Combine(Application.streamingAssetsPath, "ca.crt"))))
-            );
-         });
-#  endif
-# else
-        static readonly AsyncLazy<GrpcChannelx> globalChannel = new(async () => {
-            await UniTask.CompletedTask;
-            return GrpcChannelx.ForTarget(new(serverAddr, serverRpcPort, ChannelCredentials.SecureSsl));
-        });
-# endif
+        public const string rpcScheme = "https";
 #else
         public const int serverRpcPort = 5019;
-        static readonly AsyncLazy<GrpcChannelx> globalChannel = new(async () => {
-            await UniTask.CompletedTask;
-            return GrpcChannelx.ForTarget(new(serverAddr, serverRpcPort, ChannelCredentials.Insecure));
-        });
+        public const string rpcScheme = "http";
 #endif
+        static GrpcChannelx globalChannel = null;
+        public static GrpcChannelx GlobalChannel {
+            get {
+                if(globalChannel == null) {
+                    globalChannel = GrpcChannelx.ForAddress($"{rpcScheme}://{ServerAddr}:{serverRpcPort}");
+                }
+                return globalChannel;
+            }
+        }
+
         public const YourGameServer.Models.DeviceType deviceType =
 #if UNITY_IOS
             YourGameServer.Models.DeviceType.IOS
@@ -75,15 +82,21 @@ namespace YourGameClient
 #endif
         ;
 
-        public const string prefPrefix = "com.yourorg.yourgame.";
-        public const string prefPlayerIdKey = prefPrefix + "playerid";
-        public const string prefLastDeviceIdKey = prefPrefix + "lastdeviceid";
+        const string kPlayerId = nameof(Request) + ".playerid";
+        const string kPlayerCode = nameof(Request) + ".playercode";
+        const string kLastDeviceId = nameof(Request) + ".lastdeviceid";
 
         public static ContentType CurrentAcceptContentType = ContentType.MessagePack;
         public static ContentType CurrentRequestContentType = ContentType.MessagePack;
         public static ulong CurrentPlayerId = 0;
-        public static string CurrentSecurityToken;
-        public static DateTime CurrentSecurityTokenPeriod;
+        public static string CurrentPlayerCode = PlayerPrefs.GetString(kPlayerCode, string.Empty);
+        public static string CurrentSecurityToken = null;
+        public static DateTime CurrentSecurityTokenPeriod = DateTime.MaxValue;
+
+        /// <summary>
+        /// return true when already logged in.
+        /// </summary>
+        public static bool IsLoggedIn => CurrentPlayerId > 0;
 
         public enum ContentType
         {
@@ -108,9 +121,9 @@ namespace YourGameClient
             return WebRequest.PostJson(uri, Newtonsoft.Json.JsonConvert.SerializeObject(content));
         }
 
-        public static async UniTask<PlayerAccount> GetPlayerAccount()
+        public static async UniTask<FormalPlayerAccount> GetPlayerAccount()
         {
-            using var request = UnityWebRequest.Get($"{apiRootUrl}/PlayerAccounts/{CurrentPlayerId}");
+            using var request = UnityWebRequest.Get($"{ApiRootUrl}/PlayerAccounts/{CurrentPlayerId}");
             request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
             request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
             Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
@@ -119,11 +132,11 @@ namespace YourGameClient
             if(request.error == null) {
                 Log.Info($"Content-Type : {request.GetResponseHeader("Content-Type")}");
                 if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                    return MessagePackSerializer.Deserialize<PlayerAccount>(request.downloadHandler.data);
+                    return MessagePackSerializer.Deserialize<FormalPlayerAccount>(request.downloadHandler.data);
                 }
                 else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
                     Log.Info($"source json : {request.downloadHandler.text}");
-                    return Newtonsoft.Json.JsonConvert.DeserializeObject<PlayerAccount>(request.downloadHandler.text);
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<FormalPlayerAccount>(request.downloadHandler.text);
                 }
                 else {
                     Log.Error($"GetPlayerAccount : Unknown Format");
@@ -138,7 +151,7 @@ namespace YourGameClient
 
         public static async UniTask<IEnumerable<MaskedPlayerAccount>> GetPlayerAccounts(ulong[] ids)
         {
-            using var request = UnityWebRequest.Get($"{apiRootUrl}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}");
+            using var request = UnityWebRequest.Get($"{ApiRootUrl}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}");
             request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
             request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
             Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
@@ -166,7 +179,7 @@ namespace YourGameClient
 
         public static async UniTask<bool> SignUp()
         {
-            var client = MagicOnionClient.Create<IAccountService>(await globalChannel);
+            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
             Log.Info("SignUp : Call");
             var result = await client.SignUp(new SignInRequest {
                 DeviceType = deviceType,
@@ -176,11 +189,14 @@ namespace YourGameClient
             if(result != null) {
                 Log.Info($"SignUp : {result}");
                 CurrentPlayerId = result.Id;
+                CurrentPlayerCode = result.Code;
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
-                PlayerPrefs.SetString(prefPlayerIdKey, result.Id.ToString());
-                PlayerPrefs.SetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
+                PlayerPrefs.Set(kPlayerId, result.Id.ToString());
+                PlayerPrefs.Set(kPlayerCode, result.Code);
+                PlayerPrefs.Set(kLastDeviceId, SystemInfo.deviceUniqueIdentifier);
                 PlayerPrefs.Save();
+                KeepConnect.Instance.enabled = true;
                 return true;
             }
             else {
@@ -191,12 +207,12 @@ namespace YourGameClient
 
         public static async UniTask<bool> LogIn()
         {
-            if(!PlayerPrefs.HasKey(prefPlayerIdKey)) return false;
+            if(!PlayerPrefs.HasKey(kPlayerId)) return false;
 
-            var playerId = ulong.Parse(PlayerPrefs.GetString(prefPlayerIdKey));
-            var deviceId = PlayerPrefs.GetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
+            var playerId = ulong.Parse(PlayerPrefs.Get(kPlayerId, "0"));
+            var deviceId = PlayerPrefs.Get(kLastDeviceId, SystemInfo.deviceUniqueIdentifier);
             var newDeviceId = SystemInfo.deviceUniqueIdentifier != deviceId ? SystemInfo.deviceUniqueIdentifier : null;
-            var client = MagicOnionClient.Create<IAccountService>(await globalChannel);
+            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
             Log.Info("LogIn : Call");
             var result = await client.LogIn(new LogInRequest {
                 Id = playerId,
@@ -211,9 +227,10 @@ namespace YourGameClient
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
                 if(newDeviceId != null) {
-                    PlayerPrefs.SetString(prefLastDeviceIdKey, SystemInfo.deviceUniqueIdentifier);
+                    PlayerPrefs.Set(kLastDeviceId, SystemInfo.deviceUniqueIdentifier);
                     PlayerPrefs.Save();
                 }
+                KeepConnect.Instance.enabled = true;
                 return true;
             }
             return false;
@@ -221,7 +238,7 @@ namespace YourGameClient
 
         public static async UniTask<bool> RenewToken()
         {
-            var client = MagicOnionClient.Create<IAccountService>(await globalChannel, new IClientFilter[] { new AppendHeaderFilter() });
+            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
             var result = await client.RenewToken();
             if(result != null) {
                 Log.Info($"RenewToken : {result}");
@@ -234,8 +251,12 @@ namespace YourGameClient
         
         public static async UniTask LogOut()
         {
-            var client = MagicOnionClient.Create<IAccountService>(await globalChannel, new IClientFilter[] { new AppendHeaderFilter() });
+            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
             await client.LogOut();
+            CurrentPlayerId = 0;
+            CurrentSecurityToken = null;
+            CurrentSecurityTokenPeriod = DateTime.MaxValue;
+            KeepConnect.Instance.enabled = false;
             Log.Info("LogOut");
         }
     }

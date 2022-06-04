@@ -21,8 +21,10 @@ namespace YourGameServer.Interface // Unity cannot accpect 'namespace YourProjec
         [Key(0)]
         public ulong Id { get; init; }
         [Key(1)]
-        public string Token { get; init; }
+        public string Code { get; init; }
         [Key(2)]
+        public string Token { get; init; }
+        [Key(3)]
         public DateTime Period { get; init; }
     }
 }
