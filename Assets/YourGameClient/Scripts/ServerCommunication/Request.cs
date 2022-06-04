@@ -89,9 +89,9 @@ namespace YourGameClient
         public static ContentType CurrentAcceptContentType = ContentType.MessagePack;
         public static ContentType CurrentRequestContentType = ContentType.MessagePack;
         public static ulong CurrentPlayerId = 0;
-        public static string CurrentPlayerCode = PlayerPrefs.GetString(kPlayerCode, string.Empty);
         public static string CurrentSecurityToken = null;
         public static DateTime CurrentSecurityTokenPeriod = DateTime.MaxValue;
+        public static string LatestPlayerCode = PlayerPrefs.GetString(kPlayerCode, string.Empty);
 
         /// <summary>
         /// return true when already logged in.
@@ -189,7 +189,7 @@ namespace YourGameClient
             if(result != null) {
                 Log.Info($"SignUp : {result}");
                 CurrentPlayerId = result.Id;
-                CurrentPlayerCode = result.Code;
+                LatestPlayerCode = result.Code;
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
                 PlayerPrefs.Set(kPlayerId, result.Id.ToString());
@@ -224,6 +224,7 @@ namespace YourGameClient
             if(result != null) {
                 Log.Info($"LogIn : {result}");
                 CurrentPlayerId = playerId;
+                LatestPlayerCode = result.Code;
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
                 if(newDeviceId != null) {

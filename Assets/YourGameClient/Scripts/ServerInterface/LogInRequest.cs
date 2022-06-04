@@ -22,8 +22,10 @@ namespace YourGameServer.Interface // Unity cannot accpect 'namespace YourProjec
     public record LogInRequestResult
     {
         [Key(0)]
-        public string Token { get; init; }
+        public string Code { get; init; }
         [Key(1)]
+        public string Token { get; init; }
+        [Key(2)]
         public DateTime Period { get; init; }
     }
 }

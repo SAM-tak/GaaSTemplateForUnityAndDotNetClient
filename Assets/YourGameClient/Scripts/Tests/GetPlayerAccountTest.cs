@@ -35,7 +35,7 @@ namespace YourGameClient
             LogInfo("Start");
 
             if(!await Request.LogIn() && !await Request.SignUp()) return;
-            LogInfo($"current player : {Request.CurrentPlayerId} {Request.CurrentPlayerCode.ToHyphened()}");
+            LogInfo($"current player : {Request.CurrentPlayerId} {Request.LatestPlayerCode.ToHyphened()}");
 
             Request.CurrentAcceptContentType = accept;
             Request.CurrentRequestContentType = contentType;

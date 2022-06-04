@@ -309,7 +309,8 @@ namespace MessagePack.Formatters.YourGameServer.Interface
             }
 
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
-            writer.WriteArrayHeader(2);
+            writer.WriteArrayHeader(3);
+            formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.Code, options);
             formatterResolver.GetFormatterWithVerify<string>().Serialize(ref writer, value.Token, options);
             formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Serialize(ref writer, value.Period, options);
         }
@@ -324,6 +325,7 @@ namespace MessagePack.Formatters.YourGameServer.Interface
             options.Security.DepthStep(ref reader);
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
+            var __Code__ = default(string);
             var __Token__ = default(string);
             var __Period__ = default(global::System.DateTime);
 
@@ -332,9 +334,12 @@ namespace MessagePack.Formatters.YourGameServer.Interface
                 switch (i)
                 {
                     case 0:
-                        __Token__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        __Code__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
                         break;
                     case 1:
+                        __Token__ = formatterResolver.GetFormatterWithVerify<string>().Deserialize(ref reader, options);
+                        break;
+                    case 2:
                         __Period__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime>().Deserialize(ref reader, options);
                         break;
                     default:
@@ -344,6 +349,7 @@ namespace MessagePack.Formatters.YourGameServer.Interface
             }
 
             var ____result = new global::YourGameServer.Interface.LogInRequestResult() {
+                Code = __Code__,
                 Token = __Token__,
                 Period = __Period__,
             };
@@ -577,7 +583,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
             formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.PlayerAccountStatus>().Serialize(ref writer, value.Status, options);
             formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Serialize(ref writer, value.Since, options);
             formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Serialize(ref writer, value.LastLogin, options);
-            formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.MaskedPlayerProfile>().Serialize(ref writer, value.Profile, options);
+            formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.PlayerProfile>().Serialize(ref writer, value.Profile, options);
         }
 
         public global::YourGameServer.Models.FormalPlayerAccount Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
@@ -595,7 +601,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
             var __Status__ = default(global::YourGameServer.Models.PlayerAccountStatus);
             var __Since__ = default(global::System.DateTime?);
             var __LastLogin__ = default(global::System.DateTime?);
-            var __Profile__ = default(global::YourGameServer.Models.MaskedPlayerProfile);
+            var __Profile__ = default(global::YourGameServer.Models.PlayerProfile);
 
             for (int i = 0; i < length; i++)
             {
@@ -617,7 +623,7 @@ namespace MessagePack.Formatters.YourGameServer.Models
                         __LastLogin__ = formatterResolver.GetFormatterWithVerify<global::System.DateTime?>().Deserialize(ref reader, options);
                         break;
                     case 5:
-                        __Profile__ = formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.MaskedPlayerProfile>().Deserialize(ref reader, options);
+                        __Profile__ = formatterResolver.GetFormatterWithVerify<global::YourGameServer.Models.PlayerProfile>().Deserialize(ref reader, options);
                         break;
                     default:
                         reader.Skip();

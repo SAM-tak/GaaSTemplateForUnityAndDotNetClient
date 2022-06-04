@@ -32,6 +32,13 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         Expired,
     }
 
+#if UNITY_5_3_OR_NEWER
+    public record PlayerAccount
+    {
+        [Display(Name = "ID")]
+        public ulong Id { get; init; }
+    };
+#else
     public record PlayerAccount
     {
         [Display(Name = "ID")]
@@ -79,19 +86,18 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
             Profile = Profile?.MakeMasked()
         };
 
-#if !UNITY_5_3_OR_NEWER
         public FormalPlayerAccount MakeFormal() => new() {
             Id = Id,
             Code = Code,
             Status = Status,
             Since = Since,
             LastLogin = LastLogin,
-            Profile = Profile?.MakeMasked()
+            Profile = Profile
         };
 
         public string Code => IDCoder.Encode(Id, Secret);
-#endif
     }
+#endif
 
     [NotMapped]
     [MessagePackObject]
@@ -120,6 +126,6 @@ namespace YourGameServer.Models // Unity cannot accpect 'namespace YourProjectNa
         [Key(4)]
         public DateTime? LastLogin { get; init; }
         [Key(5)]
-        public MaskedPlayerProfile Profile { get; init; }
+        public PlayerProfile Profile { get; init; }
     }
 }
