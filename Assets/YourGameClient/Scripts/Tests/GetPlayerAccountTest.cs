@@ -32,12 +32,15 @@ namespace YourGameClient
 
             while(!start) await UniTask.NextFrame();
 
+            LogInfo("Start");
+
             if(!await Request.LogIn() && !await Request.SignUp()) return;
+            LogInfo($"current player : {Request.CurrentPlayerId} {Request.CurrentPlayerCode.ToHyphened()}");
 
             Request.CurrentAcceptContentType = accept;
             Request.CurrentRequestContentType = contentType;
             var playerAccount = await Request.GetPlayerAccount();
-            LogInfo($"playerAccount : {playerAccount} {playerAccount?.Id} {playerAccount?.Code.ToHyphened()} {playerAccount?.Since}");
+            LogInfo($"playerAccount : {playerAccount}");
 
             var playerAccounts = await Request.GetPlayerAccounts(ids);
             foreach(var i in playerAccounts) LogInfo($"playerAccount : {i} {i?.Id}");
@@ -55,8 +58,6 @@ namespace YourGameClient
 
             await Request.LogOut();
 
-
-            //LogInfo("Start");
             //done = true;
         }
 
