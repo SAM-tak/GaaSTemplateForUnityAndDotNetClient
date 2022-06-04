@@ -83,11 +83,13 @@ namespace YourGameClient
         ;
 
         const string kPlayerId = nameof(Request) + ".playerid";
+        const string kPlayerCode = nameof(Request) + ".playercode";
         const string kLastDeviceId = nameof(Request) + ".lastdeviceid";
 
         public static ContentType CurrentAcceptContentType = ContentType.MessagePack;
         public static ContentType CurrentRequestContentType = ContentType.MessagePack;
         public static ulong CurrentPlayerId = 0;
+        public static string CurrentPlayerCode = PlayerPrefs.GetString(kPlayerCode, string.Empty);
         public static string CurrentSecurityToken = null;
         public static DateTime CurrentSecurityTokenPeriod = DateTime.MaxValue;
 
@@ -119,7 +121,7 @@ namespace YourGameClient
             return WebRequest.PostJson(uri, Newtonsoft.Json.JsonConvert.SerializeObject(content));
         }
 
-        public static async UniTask<PlayerAccount> GetPlayerAccount()
+        public static async UniTask<FormalPlayerAccount> GetPlayerAccount()
         {
             using var request = UnityWebRequest.Get($"{ApiRootUrl}/PlayerAccounts/{CurrentPlayerId}");
             request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
@@ -130,11 +132,11 @@ namespace YourGameClient
             if(request.error == null) {
                 Log.Info($"Content-Type : {request.GetResponseHeader("Content-Type")}");
                 if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                    return MessagePackSerializer.Deserialize<PlayerAccount>(request.downloadHandler.data);
+                    return MessagePackSerializer.Deserialize<FormalPlayerAccount>(request.downloadHandler.data);
                 }
                 else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
                     Log.Info($"source json : {request.downloadHandler.text}");
-                    return Newtonsoft.Json.JsonConvert.DeserializeObject<PlayerAccount>(request.downloadHandler.text);
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<FormalPlayerAccount>(request.downloadHandler.text);
                 }
                 else {
                     Log.Error($"GetPlayerAccount : Unknown Format");
@@ -187,9 +189,11 @@ namespace YourGameClient
             if(result != null) {
                 Log.Info($"SignUp : {result}");
                 CurrentPlayerId = result.Id;
+                CurrentPlayerCode = result.Code;
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
                 PlayerPrefs.Set(kPlayerId, result.Id.ToString());
+                PlayerPrefs.Set(kPlayerCode, result.Code);
                 PlayerPrefs.Set(kLastDeviceId, SystemInfo.deviceUniqueIdentifier);
                 PlayerPrefs.Save();
                 KeepConnect.Instance.enabled = true;
@@ -248,11 +252,11 @@ namespace YourGameClient
         public static async UniTask LogOut()
         {
             var client = MagicOnionClient.Create<IAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
+            await client.LogOut();
             CurrentPlayerId = 0;
             CurrentSecurityToken = null;
             CurrentSecurityTokenPeriod = DateTime.MaxValue;
             KeepConnect.Instance.enabled = false;
-            await client.LogOut();
             Log.Info("LogOut");
         }
     }

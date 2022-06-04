@@ -1,11 +1,12 @@
 using System;
-using System.Threading.Tasks;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
 
 namespace YourGameClient
 {
+    using Extensions;
+
     public class GetPlayerAccountTest : MonoBehaviour
     {
         public Request.ContentType accept;
@@ -31,33 +32,32 @@ namespace YourGameClient
 
             while(!start) await UniTask.NextFrame();
 
-            LogInfo("Start");
-            done = true;
+            if(!await Request.LogIn() && !await Request.SignUp()) return;
 
-            //if(!await Request.LogIn() && !await Request.SignUp()) return;
+            Request.CurrentAcceptContentType = accept;
+            Request.CurrentRequestContentType = contentType;
+            var playerAccount = await Request.GetPlayerAccount();
+            LogInfo($"playerAccount : {playerAccount} {playerAccount?.Id} {playerAccount?.Code.ToHyphened()} {playerAccount?.Since}");
 
-            //Request.CurrentAcceptContentType = accept;
-            //Request.CurrentRequestContentType = contentType;
-            //var playerAccount = await Request.GetPlayerAccount();
-            //LogInfo($"playerAccount : {playerAccount} {playerAccount?.Id} {playerAccount?.Since}");
+            var playerAccounts = await Request.GetPlayerAccounts(ids);
+            foreach(var i in playerAccounts) LogInfo($"playerAccount : {i} {i?.Id}");
 
-            //var playerAccounts = await Request.GetPlayerAccounts(ids);
-            //foreach(var i in playerAccounts) LogInfo($"playerAccount : {i} {i?.Id} {i?.Since}");
-
-            //LogInfo($"rejason by JsonUtility : {JsonUtility.ToJson(playerAccount)}"); // NG
-            //LogInfo($"rejason by Newtonsoft : {Newtonsoft.Json.JsonConvert.SerializeObject(playerAccount)}"); // OK
+            LogInfo($"rejason by JsonUtility : {JsonUtility.ToJson(playerAccount)}"); // NG
+            LogInfo($"rejason by Newtonsoft : {Newtonsoft.Json.JsonConvert.SerializeObject(playerAccount)}"); // OK
             // JsonUtility非力すぎるのでNewtonsoft.Json使うしかない
 
-            //await UniTask.Delay(1000);
+            await UniTask.Delay(1000);
 
-            //var newToken = await Request.RenewToken();
-            //LogInfo($"newToken : {newToken}");
+            var newToken = await Request.RenewToken();
+            LogInfo($"newToken : {newToken}");
 
-            //await UniTask.Delay(1000);
+            await UniTask.Delay(1000);
 
-            //await Request.LogOut();
+            await Request.LogOut();
 
-            done = true;
+
+            //LogInfo("Start");
+            //done = true;
         }
 
         // Update is called once per frame
