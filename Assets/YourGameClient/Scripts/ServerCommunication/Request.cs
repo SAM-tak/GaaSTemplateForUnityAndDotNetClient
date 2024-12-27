@@ -224,13 +224,19 @@ namespace YourGameClient
             if(result != null) {
                 Log.Info($"LogIn : {result}");
                 CurrentPlayerId = playerId;
+                bool needs_save = false;
+                if(LatestPlayerCode != result.Code) {
+                    PlayerPrefs.Set(kPlayerCode, result.Code);
+                    needs_save = true;
+                }
+                if(newDeviceId != null) {
+                    PlayerPrefs.Set(kLastDeviceId, SystemInfo.deviceUniqueIdentifier);
+                    needs_save = true;
+                }
+                if(needs_save) PlayerPrefs.Save();
                 LatestPlayerCode = result.Code;
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
-                if(newDeviceId != null) {
-                    PlayerPrefs.Set(kLastDeviceId, SystemInfo.deviceUniqueIdentifier);
-                    PlayerPrefs.Save();
-                }
                 KeepConnect.Instance.enabled = true;
                 return true;
             }
