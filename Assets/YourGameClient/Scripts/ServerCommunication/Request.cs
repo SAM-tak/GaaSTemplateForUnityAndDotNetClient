@@ -122,6 +122,7 @@ namespace YourGameClient
         public static async UniTask<FormalPlayerAccount> GetPlayerAccount()
         {
             using var request = UnityWebRequest.Get($"{ApiRootUrl}/PlayerAccounts/{CurrentPlayerId}");
+            request.certificateHandler = new AcceptAllCertificatesSignedWithASpecificPublicKey();
             request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
             request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
             Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
@@ -150,6 +151,7 @@ namespace YourGameClient
         public static async UniTask<IEnumerable<MaskedPlayerAccount>> GetPlayerAccounts(ulong[] ids)
         {
             using var request = UnityWebRequest.Get($"{ApiRootUrl}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}");
+            request.certificateHandler = new AcceptAllCertificatesSignedWithASpecificPublicKey();
             request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
             request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
             Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
@@ -275,6 +277,17 @@ namespace YourGameClient
             header.Add("Authorization", $"Bearer {Request.CurrentSecurityToken}");
 
             return await next(context);
+        }
+    }
+
+    public class AcceptAllCertificatesSignedWithASpecificPublicKey : CertificateHandler
+    {
+        // This will validate the certificate using the built-in logic
+        protected override bool ValidateCertificate(byte[] certificateData)
+        {
+            // If you want to ignore the certificate validation and accept all certificates, return true
+            // WARNING: This is insecure and should be used only for testing
+            return true;
         }
     }
 }
