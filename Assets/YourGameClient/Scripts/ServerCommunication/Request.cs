@@ -181,11 +181,12 @@ namespace YourGameClient
         {
             var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
             Log.Info("SignUp : Call");
-            var result = await client.SignUp(new SignInRequest {
+            var request = client.SignUp(new SignInRequest {
                 DeviceType = deviceType,
                 DeviceId = SystemInfo.deviceUniqueIdentifier
             });
-            Log.Info("SignUp : Call End");
+            var result = await request;
+            Log.Info($"SignUp : Call End {request.GetStatus()}");
             if(result != null) {
                 Log.Info($"SignUp : {result}");
                 CurrentPlayerId = result.Id;
@@ -211,34 +212,38 @@ namespace YourGameClient
 
             var playerId = ulong.Parse(PlayerPrefs.Get(PlayerId, "0"));
             var deviceId = PlayerPrefs.Get(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
-            var newDeviceId = SystemInfo.deviceUniqueIdentifier != deviceId ? SystemInfo.deviceUniqueIdentifier : null;
-            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
-            Log.Info("LogIn : Call");
-            var result = await client.LogIn(new LogInRequest {
-                Id = playerId,
-                DeviceType = deviceType,
-                DeviceId = deviceId,
-                NewDeviceId = newDeviceId
-            });
-            Log.Info("LogIn : End");
-            if(result != null) {
-                Log.Info($"LogIn : {result}");
-                CurrentPlayerId = playerId;
-                bool needs_save = false;
-                if(LatestPlayerCode != result.Code) {
-                    PlayerPrefs.Set(PlayerCode, result.Code);
-                    needs_save = true;
+            bool deviceChanged = SystemInfo.deviceUniqueIdentifier != deviceId;
+            // If valid newDeviceId call failed, it may means already accepted device change on server, try normal login with newDeviceId = null again.
+            for(var newDeviceId = deviceChanged ? SystemInfo.deviceUniqueIdentifier : null; deviceId != null; deviceId = newDeviceId, newDeviceId = null) {
+                var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
+                Log.Info("LogIn : Call");
+                var request = client.LogIn(new LogInRequest {
+                    Id = playerId,
+                    DeviceType = deviceType,
+                    DeviceId = deviceId,
+                    NewDeviceId = newDeviceId
+                });
+                var result = await request;
+                Log.Info($"LogIn : End {request.GetStatus()}");
+                if(result != null) {
+                    Log.Info($"LogIn : {result}");
+                    CurrentPlayerId = playerId;
+                    bool needs_save = false;
+                    if(LatestPlayerCode != result.Code) {
+                        PlayerPrefs.Set(PlayerCode, result.Code);
+                        needs_save = true;
+                    }
+                    if(deviceChanged) {
+                        PlayerPrefs.Set(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
+                        needs_save = true;
+                    }
+                    if(needs_save) PlayerPrefs.Save();
+                    LatestPlayerCode = result.Code;
+                    CurrentSecurityToken = result.Token;
+                    CurrentSecurityTokenPeriod = result.Period;
+                    KeepConnect.Instance.enabled = true;
+                    return true;
                 }
-                if(newDeviceId != null) {
-                    PlayerPrefs.Set(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
-                    needs_save = true;
-                }
-                if(needs_save) PlayerPrefs.Save();
-                LatestPlayerCode = result.Code;
-                CurrentSecurityToken = result.Token;
-                CurrentSecurityTokenPeriod = result.Period;
-                KeepConnect.Instance.enabled = true;
-                return true;
             }
             return false;
         }

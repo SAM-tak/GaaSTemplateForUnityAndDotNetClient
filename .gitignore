@@ -85,8 +85,8 @@ crashlytics-build.properties
 /[Aa]ssets/Packages/*
 !.gitkeep
 
-/[Aa]ssets/StreamingAssets/ca.crt
-/[Aa]ssets/StreamingAssets/ca.crt.meta
+/[Aa]ssets/StreamingAssets/*.crt
+/[Aa]ssets/StreamingAssets/*.crt.meta
 
 /[Aa]ssets/google-services.json
 /[Aa]ssets/google-services.json.meta

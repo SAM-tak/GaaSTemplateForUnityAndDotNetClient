@@ -1,5 +1,6 @@
 using UnityEngine;
 using MessagePack;
+using MessagePack.Resolvers;
 using MessagePack.Unity;
 
 namespace YourGameClient
@@ -9,7 +10,11 @@ namespace YourGameClient
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void Initialize()
         {
-            MessagePackSerializer.DefaultOptions = MessagePackSerializerOptions.Standard.WithResolver(UnityResolver.InstanceWithStandardResolver);
+            StaticCompositeResolver.Instance.Register(
+                UnityResolver.InstanceWithStandardResolver,
+                MessagePack.CustomResolver.Instance
+            );
+            MessagePackSerializer.DefaultOptions = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray).WithResolver(StaticCompositeResolver.Instance);
         }
     }
 }

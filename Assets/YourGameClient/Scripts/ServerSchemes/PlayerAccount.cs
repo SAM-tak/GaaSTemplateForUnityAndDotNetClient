@@ -1,6 +1,5 @@
 #nullable disable
 using System; // Unity needs this
-using System.Collections.Generic; // Unity needs this
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using MessagePack;

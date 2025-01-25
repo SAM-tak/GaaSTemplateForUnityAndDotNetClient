@@ -14,13 +14,17 @@ namespace YourGameClient
     /// </remarks>
     public class KeepConnect : MonoBehaviour
     {
-        static Lazy<KeepConnect> LazyInstance => new(() => {
-            var go = new GameObject(typeof(KeepConnect).FullName);
-            DontDestroyOnLoad(go);
-            return go.AddComponent<KeepConnect>();
-        });
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void Instantiate()
+        {
+            if(!Instance) {
+                var go = new GameObject(typeof(KeepConnect).FullName);
+                DontDestroyOnLoad(go);
+                Instance = go.AddComponent<KeepConnect>();
+            }
+        }
 
-        public static KeepConnect Instance => LazyInstance.Value;
+        public static KeepConnect Instance { get; private set; }
 
         void OnEnable()
         {
@@ -40,16 +44,17 @@ namespace YourGameClient
             enabled = false;
         }
 
-        async void OnDestroy()
+        void OnDestroy()
         {
-            LogInfo("OnDestroy");
-            if(Request.IsLoggedIn) await Request.LogOut().Timeout(TimeSpan.FromSeconds(3));
+            if(Instance == this) Instance = null;
         }
 
-        async void OnApplicationQuit()
-        {
-            LogInfo("OnApplicationQuit");
-            if(Request.IsLoggedIn) await Request.LogOut().Timeout(TimeSpan.FromSeconds(3));
-        }
+        // 意味がないかも。
+        // async void OnApplicationQuit()
+        // {
+        //     LogInfo("OnApplicationQuit");
+        //     if(Request.IsLoggedIn) await Request.LogOut().Timeout(TimeSpan.FromSeconds(3));
+        //     if(Instance == this) Instance = null;
+        // }
     }
 }
