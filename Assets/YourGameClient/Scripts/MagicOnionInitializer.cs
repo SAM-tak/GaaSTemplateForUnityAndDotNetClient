@@ -4,10 +4,11 @@
 #endif
 using System.IO;
 using UnityEngine;
-using Grpc.Core;
 using Grpc.Net.Client;
 using Cysharp.Threading.Tasks;
+using MagicOnion.Client;
 using MagicOnion.Unity;
+using CustomUnity;
 
 namespace YourGameClient
 {
@@ -24,31 +25,24 @@ namespace YourGameClient
             await request.SendWebRequest();
             Log.Info($"ReadDevCert SendWebRequest end cert = {request.downloadHandler.text}");
             var cert = request.downloadHandler.text;
-            // Initialize gRPC channel provider when the application is loaded.
-            GrpcChannelProviderHost.Initialize(new DefaultGrpcChannelProvider(() => new GrpcChannelOptions {
-                // send keepalive ping every 5 second, default is 2 hours
-                // new ChannelOption("grpc.keepalive_time_ms", 5000),
-                // keepalive ping time out after 5 seconds, default is 20 seconds
-                // new ChannelOption("grpc.keepalive_timeout_ms", 5 * 1000),
-                Credentials = cert != null ? new SslCredentials(request.downloadHandler.text) : null
-            }));
 # else
+            Log.Info("Read ca.crt");
             var cert = await File.ReadAllTextAsync(Path.Combine(Application.streamingAssetsPath, "ca.crt"));
-            // Initialize gRPC channel provider when the application is loaded.
-            GrpcChannelProviderHost.Initialize(new DefaultGrpcChannelProvider(() => new GrpcChannelOptions {
-                // send keepalive ping every 5 second, default is 2 hours
-                // new ChannelOption("grpc.keepalive_time_ms", 5000),
-                // keepalive ping time out after 5 seconds, default is 20 seconds
-                // new ChannelOption("grpc.keepalive_timeout_ms", 5 * 1000),
-                Credentials = cert != null ? new SslCredentials(cert) : null
-            }));
 # endif
+            // Initialize gRPC channel provider when the application is loaded.
+            GrpcChannelProviderHost.Initialize(new GrpcNetClientGrpcChannelProvider(() => new GrpcChannelOptions {
+                HttpHandler = new Cysharp.Net.Http.YetAnotherHttpHandler() {
+                    // Http2Only = true,
+                    RootCertificates = cert,
+                    SkipCertificateVerification = false
+                }
+            }));
 #else
             // Initialize gRPC channel provider when the application is loaded.
             //GrpcChannelProviderHost.Initialize(new DefaultGrpcChannelProvider(new() {
             //    HttpHandler = new GrpcWebHandler(new HttpClientHandler())
             //}));
-            GrpcChannelProviderHost.Initialize(new DefaultGrpcChannelProvider(() => new GrpcChannelOptions {
+            GrpcChannelProviderHost.Initialize(new GrpcNetClientGrpcChannelProvider(() => new GrpcChannelOptions {
                 // send keepalive ping every 5 second, default is 2 hours
                 // new ChannelOption("grpc.keepalive_time_ms", 5000),
                 // keepalive ping time out after 5 seconds, default is 20 seconds
@@ -58,4 +52,7 @@ namespace YourGameClient
 #endif
         }
     }
+
+    [MagicOnionClientGeneration(typeof(YourGameServer.Interface.IAccountService))]
+    partial class MagicOnionGeneratedClientInitializer { }
 }

@@ -2,6 +2,7 @@
   "dependencies": {
     "com.cysharp.magiconion": "6.1.6",
     "com.cysharp.unitask": "2.5.10",
+    "com.cysharp.yetanotherhttphandler": "1.9.0",
     "com.github.messagepack-csharp": "https://github.com/MessagePack-CSharp/MessagePack-CSharp.git?path=src/MessagePack.UnityClient/Assets/Scripts/MessagePack",
     "com.google.external-dependency-manager": "file:com.google.external-dependency-manager-1.2.169.tgz",
     "com.google.firebase.analytics": "file:com.google.firebase.analytics-8.8.0.tgz",
@@ -16,14 +17,15 @@
     "com.unity.ide.rider": "3.0.34",
     "com.unity.ide.visualstudio": "2.0.22",
     "com.unity.inputsystem": "1.11.2",
-    "com.unity.localization": "1.5.3",
+    "com.unity.localization": "1.5.4",
     "com.unity.multiplayer.center": "1.0.0",
     "com.unity.purchasing": "4.12.2",
     "com.unity.test-framework": "1.4.5",
     "com.unity.timeline": "1.8.7",
     "com.unity.ugui": "2.0.0",
     "com.unity.visualscripting": "1.9.5",
-    "net.sam-tak.customunity": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.10",
+    "net.sam-tak.customunity": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity",
+    "org.nuget.system.io.pipelines": "9.0.1",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
@@ -66,6 +68,14 @@
         "io.backtrace",
         "com.praeclarum"
       ]
+    },
+    {
+      "name": "Unity NuGet",
+      "url": "https://unitynuget-registry.azurewebsites.net",
+      "scopes": [
+        "org.nuget"
+      ],
+      "overrideBuiltIns": false
     }
   ]
 }

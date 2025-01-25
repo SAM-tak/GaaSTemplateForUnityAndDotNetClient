@@ -14,6 +14,13 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "com.cysharp.yetanotherhttphandler": {
+      "version": "1.9.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.github.messagepack-csharp": {
       "version": "https://github.com/MessagePack-CSharp/MessagePack-CSharp.git?path=src/MessagePack.UnityClient/Assets/Scripts/MessagePack",
       "depth": 0,
@@ -119,7 +126,7 @@
       "depth": 0,
       "source": "builtin",
       "dependencies": {
-        "com.unity.mobile.android-logcat": "1.4.3",
+        "com.unity.mobile.android-logcat": "1.4.4",
         "com.unity.adaptiveperformance": "5.1.0",
         "com.unity.mobile.notifications": "2.4.0"
       }
@@ -152,7 +159,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.localization": {
-      "version": "1.5.3",
+      "version": "1.5.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -162,7 +169,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.mobile.android-logcat": {
-      "version": "1.4.3",
+      "version": "1.4.4",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -273,11 +280,63 @@
       "url": "https://packages.unity.com"
     },
     "net.sam-tak.customunity": {
-      "version": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.10",
+      "version": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "2286185cf54606b4be98e60033b83b4444b372f4"
+      "hash": "6df472e6760c7d1594fda3ad76c43d0fcd65e0b5"
+    },
+    "org.nuget.system.buffers": {
+      "version": "4.5.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.system.io.pipelines": {
+      "version": "9.0.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.buffers": "4.5.1",
+        "org.nuget.system.memory": "4.5.5",
+        "org.nuget.system.threading.tasks.extensions": "4.5.4"
+      },
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.system.memory": {
+      "version": "4.5.5",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.buffers": "4.5.1",
+        "org.nuget.system.numerics.vectors": "4.4.0",
+        "org.nuget.system.runtime.compilerservices.unsafe": "4.5.3"
+      },
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.system.numerics.vectors": {
+      "version": "4.4.0",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.system.runtime.compilerservices.unsafe": {
+      "version": "4.5.3",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.system.threading.tasks.extensions": {
+      "version": "4.5.4",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.runtime.compilerservices.unsafe": "4.5.3"
+      },
+      "url": "https://unitynuget-registry.azurewebsites.net"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
