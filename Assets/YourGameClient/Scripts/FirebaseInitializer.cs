@@ -3,7 +3,6 @@ using CustomUnity;
 
 namespace YourGameClient
 {
-
     static public class FirebaseInitializer
     {
         public static bool Done { get; private set; }

@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.bgtools.playerprefseditor": {
+      "version": "1.2.2",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.cysharp.magiconion": {
       "version": "6.1.6",
       "depth": 0,
@@ -26,7 +33,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "8373710fb0ae4bb453737f773b930401d8500c31"
+      "hash": "c759cbf2f8590ac4224a1b42521e1c986bb85553"
     },
     "com.google.external-dependency-manager": {
       "version": "file:com.google.external-dependency-manager-1.2.169.tgz",
@@ -286,11 +293,80 @@
       "dependencies": {},
       "hash": "6df472e6760c7d1594fda3ad76c43d0fcd65e0b5"
     },
+    "org.nuget.grpc.core.api": {
+      "version": "2.67.0",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.memory": "4.5.3"
+      },
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.grpc.net.client": {
+      "version": "2.67.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.grpc.net.common": "2.67.0",
+        "org.nuget.microsoft.extensions.logging.abstractions": "6.0.0",
+        "org.nuget.system.diagnostics.diagnosticsource": "6.0.1"
+      },
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.grpc.net.common": {
+      "version": "2.67.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.grpc.core.api": "2.67.0",
+        "org.nuget.microsoft.bcl.asyncinterfaces": "6.0.0"
+      },
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.microsoft.bcl.asyncinterfaces": {
+      "version": "6.0.0",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.threading.tasks.extensions": "4.5.4"
+      },
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.microsoft.extensions.logging.abstractions": {
+      "version": "6.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.buffers": "4.5.1",
+        "org.nuget.system.memory": "4.5.4"
+      },
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.microsoft.net.stringtools": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.memory": "4.5.4",
+        "org.nuget.system.runtime.compilerservices.unsafe": "5.0.0"
+      },
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
     "org.nuget.system.buffers": {
       "version": "4.5.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
+    "org.nuget.system.diagnostics.diagnosticsource": {
+      "version": "6.0.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "org.nuget.system.runtime.compilerservices.unsafe": "6.0.0",
+        "org.nuget.system.memory": "4.5.4"
+      },
       "url": "https://unitynuget-registry.azurewebsites.net"
     },
     "org.nuget.system.io.pipelines": {
@@ -323,7 +399,7 @@
       "url": "https://unitynuget-registry.azurewebsites.net"
     },
     "org.nuget.system.runtime.compilerservices.unsafe": {
-      "version": "4.5.3",
+      "version": "6.0.0",
       "depth": 2,
       "source": "registry",
       "dependencies": {},

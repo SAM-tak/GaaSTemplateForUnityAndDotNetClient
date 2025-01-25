@@ -31,15 +31,15 @@ namespace YourGameClient
         public static string ServerAddr {
             get => serverAddr;
             set {
-                apiRootUrl = null;
-                if(globalChannel != null) {
-                    globalChannel.Dispose();
-                    globalChannel = null;
+                _apiRootUrl = null;
+                if(_globalChannel != null) {
+                    _globalChannel.Dispose();
+                    _globalChannel = null;
                 }
                 serverAddr = value;
             }
         }
-        static string apiRootUrl = null;
+        static string _apiRootUrl = null;
 #if USE_API_TSL
         public const int serverPort = 7142;
         public const string scheme = "https";
@@ -49,8 +49,8 @@ namespace YourGameClient
 #endif
         public static string ApiRootUrl {
             get {
-                if(apiRootUrl is null) apiRootUrl = $"{scheme}://{ServerAddr}:{serverPort}/api";
-                return apiRootUrl;
+                _apiRootUrl ??= $"{scheme}://{ServerAddr}:{serverPort}/api";
+                return _apiRootUrl;
             }
         }
 #if USE_RPC_TSL
@@ -60,13 +60,11 @@ namespace YourGameClient
         public const int serverRpcPort = 5019;
         public const string rpcScheme = "http";
 #endif
-        static GrpcChannelx globalChannel = null;
+        static GrpcChannelx _globalChannel = null;
         public static GrpcChannelx GlobalChannel {
             get {
-                if(globalChannel == null) {
-                    globalChannel = GrpcChannelx.ForAddress($"{rpcScheme}://{ServerAddr}:{serverRpcPort}");
-                }
-                return globalChannel;
+                _globalChannel ??= GrpcChannelx.ForAddress($"{rpcScheme}://{ServerAddr}:{serverRpcPort}");
+                return _globalChannel;
             }
         }
 
@@ -82,16 +80,16 @@ namespace YourGameClient
 #endif
         ;
 
-        const string kPlayerId = nameof(Request) + ".playerid";
-        const string kPlayerCode = nameof(Request) + ".playercode";
-        const string kLastDeviceId = nameof(Request) + ".lastdeviceid";
+        const string PlayerId = nameof(Request) + ".playerid";
+        const string PlayerCode = nameof(Request) + ".playercode";
+        const string LastDeviceId = nameof(Request) + ".lastdeviceid";
 
         public static ContentType CurrentAcceptContentType = ContentType.MessagePack;
         public static ContentType CurrentRequestContentType = ContentType.MessagePack;
         public static ulong CurrentPlayerId = 0;
         public static string CurrentSecurityToken = null;
         public static DateTime CurrentSecurityTokenPeriod = DateTime.MaxValue;
-        public static string LatestPlayerCode = PlayerPrefs.GetString(kPlayerCode, string.Empty);
+        public static string LatestPlayerCode = PlayerPrefs.GetString(PlayerCode, string.Empty);
 
         /// <summary>
         /// return true when already logged in.
@@ -192,9 +190,9 @@ namespace YourGameClient
                 LatestPlayerCode = result.Code;
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
-                PlayerPrefs.Set(kPlayerId, result.Id.ToString());
-                PlayerPrefs.Set(kPlayerCode, result.Code);
-                PlayerPrefs.Set(kLastDeviceId, SystemInfo.deviceUniqueIdentifier);
+                PlayerPrefs.Set(PlayerId, result.Id.ToString());
+                PlayerPrefs.Set(PlayerCode, result.Code);
+                PlayerPrefs.Set(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
                 PlayerPrefs.Save();
                 KeepConnect.Instance.enabled = true;
                 return true;
@@ -207,10 +205,10 @@ namespace YourGameClient
 
         public static async UniTask<bool> LogIn()
         {
-            if(!PlayerPrefs.HasKey(kPlayerId)) return false;
+            if(!PlayerPrefs.HasKey(PlayerId)) return false;
 
-            var playerId = ulong.Parse(PlayerPrefs.Get(kPlayerId, "0"));
-            var deviceId = PlayerPrefs.Get(kLastDeviceId, SystemInfo.deviceUniqueIdentifier);
+            var playerId = ulong.Parse(PlayerPrefs.Get(PlayerId, "0"));
+            var deviceId = PlayerPrefs.Get(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
             var newDeviceId = SystemInfo.deviceUniqueIdentifier != deviceId ? SystemInfo.deviceUniqueIdentifier : null;
             var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
             Log.Info("LogIn : Call");
@@ -226,11 +224,11 @@ namespace YourGameClient
                 CurrentPlayerId = playerId;
                 bool needs_save = false;
                 if(LatestPlayerCode != result.Code) {
-                    PlayerPrefs.Set(kPlayerCode, result.Code);
+                    PlayerPrefs.Set(PlayerCode, result.Code);
                     needs_save = true;
                 }
                 if(newDeviceId != null) {
-                    PlayerPrefs.Set(kLastDeviceId, SystemInfo.deviceUniqueIdentifier);
+                    PlayerPrefs.Set(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
                     needs_save = true;
                 }
                 if(needs_save) PlayerPrefs.Save();
