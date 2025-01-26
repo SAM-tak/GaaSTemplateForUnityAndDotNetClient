@@ -1,0 +1,3 @@
+[submodule "Assets/YourGameClient/Scripts/ServerInterface"]
+	path = Assets/YourGameClient/Scripts/ServerInterface
+	url = git@github.com:SAM-tak/GaaSTemplateForUnityAndDotNetShared.git
