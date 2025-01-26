@@ -1,7 +1,6 @@
 #nullable disable
 using System; // Unity needs this
 using MessagePack;
-using YourGameServer.Models;
 
 namespace YourGameServer.Interface // Unity cannot accpect 'namespace YourProjectName.Models;' yet
 {

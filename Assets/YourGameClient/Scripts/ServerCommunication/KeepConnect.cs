@@ -20,7 +20,10 @@ namespace YourGameClient
             if(!Instance) {
                 var go = new GameObject(typeof(KeepConnect).FullName);
                 DontDestroyOnLoad(go);
+                go.SetActive(false);
                 Instance = go.AddComponent<KeepConnect>();
+                Instance.enabled = false;
+                go.SetActive(true);
             }
         }
 
@@ -33,7 +36,6 @@ namespace YourGameClient
 
         IEnumerator KeepAlive()
         {
-            yield return null;
             while(Request.IsLoggedIn) {
                 if((Request.CurrentSecurityTokenPeriod - DateTime.UtcNow).Minutes < 1) {
                     var task = Request.RenewToken();
@@ -48,13 +50,5 @@ namespace YourGameClient
         {
             if(Instance == this) Instance = null;
         }
-
-        // 意味がないかも。
-        // async void OnApplicationQuit()
-        // {
-        //     LogInfo("OnApplicationQuit");
-        //     if(Request.IsLoggedIn) await Request.LogOut().Timeout(TimeSpan.FromSeconds(3));
-        //     if(Instance == this) Instance = null;
-        // }
     }
 }

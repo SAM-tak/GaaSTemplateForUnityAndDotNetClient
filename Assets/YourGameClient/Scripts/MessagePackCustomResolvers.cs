@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MessagePack;
 using MessagePack.Formatters;
-using YourGameServer.Models;
+using YourGameServer.Interface;
 
 namespace YourGameClient.MessagePack
 {
@@ -37,10 +37,9 @@ namespace YourGameClient.MessagePack
     internal static class CustomResolverGetFormatterHelper
     {
         private static readonly Dictionary<Type, object> FormatterMap = new() {
-            { typeof(IEnumerable<PlayerAccount>), new InterfaceEnumerableFormatter<PlayerAccount>() },
+            { typeof(IEnumerable<FormalPlayerAccount>), new InterfaceEnumerableFormatter<FormalPlayerAccount>() },
             { typeof(IEnumerable<MaskedPlayerAccount>), new InterfaceEnumerableFormatter<MaskedPlayerAccount>() },
-            { typeof(IEnumerable<PlayerDevice>), new InterfaceEnumerableFormatter<PlayerDevice>() },
-            { typeof(IEnumerable<PlayerProfile>), new InterfaceEnumerableFormatter<PlayerProfile>() },
+            { typeof(IEnumerable<FormalPlayerProfile>), new InterfaceEnumerableFormatter<FormalPlayerProfile>() },
             { typeof(IEnumerable<MaskedPlayerProfile>), new InterfaceEnumerableFormatter<MaskedPlayerProfile>() },
         };
 

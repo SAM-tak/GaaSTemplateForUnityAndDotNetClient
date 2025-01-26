@@ -1,20 +1,11 @@
-#if UNITY_IOS || UNITY_ANDROID && DEVELOPMENT_BUILD && !UNITY_EDITOR
-#else
-# define USE_API_TSL
-# define USE_RPC_TSL
-#endif
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Networking;
 using Cysharp.Threading.Tasks;
 using MagicOnion;
 using MagicOnion.Client;
-using MessagePack;
 using CustomUnity;
-using YourGameServer.Models;
 using YourGameServer.Interface;
 using PlayerPrefs = CustomUnity.PlayerPrefs;
 
@@ -31,7 +22,6 @@ namespace YourGameClient
         public static string ServerAddr {
             get => serverAddr;
             set {
-                _apiRootUrl = null;
                 if(_globalChannel != null) {
                     _globalChannel.Dispose();
                     _globalChannel = null;
@@ -39,27 +29,8 @@ namespace YourGameClient
                 serverAddr = value;
             }
         }
-        static string _apiRootUrl = null;
-#if USE_API_TSL
-        public const int serverPort = 7142;
-        public const string scheme = "https";
-#else
-        public const int serverPort = 5018;
-        public const string scheme = "http";
-#endif
-        public static string ApiRootUrl {
-            get {
-                _apiRootUrl ??= $"{scheme}://{ServerAddr}:{serverPort}/api";
-                return _apiRootUrl;
-            }
-        }
-#if USE_RPC_TSL
         public const int serverRpcPort = 7143;
         public const string rpcScheme = "https";
-#else
-        public const int serverRpcPort = 5019;
-        public const string rpcScheme = "http";
-#endif
         static GrpcChannelx _globalChannel = null;
         public static GrpcChannelx GlobalChannel {
             get {
@@ -68,15 +39,15 @@ namespace YourGameClient
             }
         }
 
-        public const YourGameServer.Models.DeviceType deviceType =
+        public const YourGameServer.Interface.DeviceType deviceType =
 #if UNITY_IOS
-            YourGameServer.Models.DeviceType.IOS
+            YourGameServer.Interface.DeviceType.IOS
 #elif UNITY_ANDROID
-            YourGameServer.Models.DeviceType.Android
+            YourGameServer.Interface.DeviceType.Android
 #elif UNITY_WEBGL
-            YourGameServer.Models.DeviceType.WebGL
+            YourGameServer.Interface.DeviceType.WebGL
 #else
-            YourGameServer.Models.DeviceType.StandAlone
+            YourGameServer.Interface.DeviceType.StandAlone
 #endif
         ;
 
@@ -111,70 +82,28 @@ namespace YourGameClient
             };
         }
 
-        internal static UnityWebRequest PostRequest<T>(string uri, T content)
-        {
-            if(CurrentRequestContentType == ContentType.MessagePack) {
-                return WebRequest.Post(uri, MessagePackSerializer.Serialize(content), "application/x-msgpack");
-            }
-            return WebRequest.PostJson(uri, Newtonsoft.Json.JsonConvert.SerializeObject(content));
-        }
-
         public static async UniTask<FormalPlayerAccount> GetPlayerAccount()
         {
-            using var request = UnityWebRequest.Get($"{ApiRootUrl}/PlayerAccounts/{CurrentPlayerId}");
-            request.certificateHandler = new AcceptAllCertificatesSignedWithASpecificPublicKey();
-            request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
-            request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
-            Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
-
-            await request.SendWebRequest();
-            if(request.error == null) {
-                Log.Info($"Content-Type : {request.GetResponseHeader("Content-Type")}");
-                if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                    return MessagePackSerializer.Deserialize<FormalPlayerAccount>(request.downloadHandler.data);
-                }
-                else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
-                    Log.Info($"source json : {request.downloadHandler.text}");
-                    return Newtonsoft.Json.JsonConvert.DeserializeObject<FormalPlayerAccount>(request.downloadHandler.text);
-                }
-                else {
-                    Log.Error($"GetPlayerAccount : Unknown Format");
-                    return null;
-                }
+            var client = MagicOnionClient.Create<IPlayerAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
+            var request = client.GetPlayerAccount();
+            var result = await request;
+            var status = request.GetStatus();
+            if(status.StatusCode != Grpc.Core.StatusCode.OK) {
+                Log.Error($"GetPlayerAccount : {status}");
             }
-            else {
-                Log.Error($"GetPlayerAccount : {request.error}");
-            }
-            return null;
+            return result;
         }
 
         public static async UniTask<IEnumerable<MaskedPlayerAccount>> GetPlayerAccounts(ulong[] ids)
         {
-            using var request = UnityWebRequest.Get($"{ApiRootUrl}/PlayerAccounts?{string.Join('&', ids.Select(ids => "id=" + ids.ToString()))}");
-            request.certificateHandler = new AcceptAllCertificatesSignedWithASpecificPublicKey();
-            request.SetRequestHeader("Accept", CurrentAcceptContentType.ToHeaderString());
-            request.SetRequestHeader("Authorization", $"Bearer {CurrentSecurityToken}");
-            Log.Info($"CurrentSecurityToken : {CurrentSecurityToken}");
-
-            await request.SendWebRequest();
-            if(request.error == null) {
-                Log.Info($"Content-Type : {request.GetResponseHeader("Content-Type")}");
-                if(request.GetResponseHeader("Content-Type").Contains("application/x-msgpack")) {
-                    return MessagePackSerializer.Deserialize<IEnumerable<MaskedPlayerAccount>>(request.downloadHandler.data);
-                }
-                else if(request.GetResponseHeader("Content-Type").Contains("application/json")) {
-                    Log.Info($"source json : {request.downloadHandler.text}");
-                    return Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<MaskedPlayerAccount>>(request.downloadHandler.text);
-                }
-                else {
-                    Log.Error($"GetPlayerAccount : Unknown Format");
-                    return null;
-                }
+            var client = MagicOnionClient.Create<IPlayerAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
+            var request = client.GetPlayerAccounts(ids);
+            var result = await request;
+            var status = request.GetStatus();
+            if(status.StatusCode != Grpc.Core.StatusCode.OK) {
+                Log.Error($"GetPlayerAccount : {status}");
             }
-            else {
-                Log.Error($"GetPlayerAccount : {request.error}");
-            }
-            return null;
+            return result;
         }
 
         public static async UniTask<bool> SignUp()
@@ -264,12 +193,13 @@ namespace YourGameClient
         public static async UniTask LogOut()
         {
             var client = MagicOnionClient.Create<IAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
-            await client.LogOut();
+            var request = client.LogOut();
+            await request;
             CurrentPlayerId = 0;
             CurrentSecurityToken = null;
             CurrentSecurityTokenPeriod = DateTime.MaxValue;
             KeepConnect.Instance.enabled = false;
-            Log.Info("LogOut");
+            Log.Info($"LogOut {request.GetStatus()}");
         }
     }
 
@@ -282,17 +212,6 @@ namespace YourGameClient
             header.Add("Authorization", $"Bearer {Request.CurrentSecurityToken}");
 
             return await next(context);
-        }
-    }
-
-    public class AcceptAllCertificatesSignedWithASpecificPublicKey : CertificateHandler
-    {
-        // This will validate the certificate using the built-in logic
-        protected override bool ValidateCertificate(byte[] certificateData)
-        {
-            // If you want to ignore the certificate validation and accept all certificates, return true
-            // WARNING: This is insecure and should be used only for testing
-            return true;
         }
     }
 }
