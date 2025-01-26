@@ -57,10 +57,10 @@ namespace YourGameClient
 
         public static ContentType CurrentAcceptContentType = ContentType.MessagePack;
         public static ContentType CurrentRequestContentType = ContentType.MessagePack;
-        public static ulong CurrentPlayerId = 0;
-        public static string CurrentSecurityToken = null;
-        public static DateTime CurrentSecurityTokenPeriod = DateTime.MaxValue;
-        public static string LatestPlayerCode = PlayerPrefs.GetString(PlayerCode, string.Empty);
+        public static ulong CurrentPlayerId { get; private set; } = 0;
+        public static string CurrentSecurityToken { get; private set; } = null;
+        public static DateTime CurrentSecurityTokenPeriod { get; private set; } = DateTime.MaxValue;
+        public static string LatestPlayerCode { get; private set; } = PlayerPrefs.GetString(PlayerCode, string.Empty);
 
         /// <summary>
         /// return true when already logged in.
@@ -73,44 +73,11 @@ namespace YourGameClient
             JSON,
         }
 
-        public static string ToHeaderString(this ContentType contentType)
-        {
-            return contentType switch {
-                ContentType.MessagePack => "application/x-msgpack",
-                ContentType.JSON => "application/json",
-                _ => ""
-            };
-        }
-
-        public static async UniTask<FormalPlayerAccount> GetPlayerAccount()
-        {
-            var client = MagicOnionClient.Create<IPlayerAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
-            var request = client.GetPlayerAccount();
-            var result = await request;
-            var status = request.GetStatus();
-            if(status.StatusCode != Grpc.Core.StatusCode.OK) {
-                Log.Error($"GetPlayerAccount : {status}");
-            }
-            return result;
-        }
-
-        public static async UniTask<IEnumerable<MaskedPlayerAccount>> GetPlayerAccounts(ulong[] ids)
-        {
-            var client = MagicOnionClient.Create<IPlayerAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
-            var request = client.GetPlayerAccounts(ids);
-            var result = await request;
-            var status = request.GetStatus();
-            if(status.StatusCode != Grpc.Core.StatusCode.OK) {
-                Log.Error($"GetPlayerAccount : {status}");
-            }
-            return result;
-        }
-
         public static async UniTask<bool> SignUp()
         {
-            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
-            Log.Info("SignUp : Call");
-            var request = client.SignUp(new SignInRequest {
+            var client = CreateAccountClient();
+            Log.Info($"SignUp : Call DeviceType = {deviceType}, DeviceId = {SystemInfo.deviceUniqueIdentifier}");
+            var request = client.SignUp(new() {
                 DeviceType = deviceType,
                 DeviceId = SystemInfo.deviceUniqueIdentifier
             });
@@ -144,9 +111,9 @@ namespace YourGameClient
             bool deviceChanged = SystemInfo.deviceUniqueIdentifier != deviceId;
             // If valid newDeviceId call failed, it may means already accepted device change on server, try normal login with newDeviceId = null again.
             for(var newDeviceId = deviceChanged ? SystemInfo.deviceUniqueIdentifier : null; deviceId != null; deviceId = newDeviceId, newDeviceId = null) {
-                var client = MagicOnionClient.Create<IAccountService>(GlobalChannel);
-                Log.Info("LogIn : Call");
-                var request = client.LogIn(new LogInRequest {
+                var client = CreateAccountClient();
+                Log.Info($"LogIn : Call Id = {playerId}, DeviceType = {deviceType}, DeviceId = {deviceId}, NewDeviceId = {newDeviceId}");
+                var request = client.LogIn(new() {
                     Id = playerId,
                     DeviceType = deviceType,
                     DeviceId = deviceId,
@@ -179,7 +146,7 @@ namespace YourGameClient
 
         public static async UniTask<bool> RenewToken()
         {
-            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
+            var client = CreateAccountClient();
             var result = await client.RenewToken();
             if(result != null) {
                 Log.Info($"RenewToken : {result}");
@@ -192,7 +159,7 @@ namespace YourGameClient
         
         public static async UniTask LogOut()
         {
-            var client = MagicOnionClient.Create<IAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
+            var client = CreateAccountClient();
             var request = client.LogOut();
             await request;
             CurrentPlayerId = 0;
@@ -201,17 +168,47 @@ namespace YourGameClient
             KeepConnect.Instance.enabled = false;
             Log.Info($"LogOut {request.GetStatus()}");
         }
-    }
 
-    public class AppendHeaderFilter : IClientFilter
-    {
-        public async ValueTask<ResponseContext> SendAsync(RequestContext context, Func<RequestContext, ValueTask<ResponseContext>> next)
+        public static async UniTask<FormalPlayerAccount> GetPlayerAccount()
         {
-            // add the common header(like authentication).
-            var header = context.CallOptions.Headers;
-            header.Add("Authorization", $"Bearer {Request.CurrentSecurityToken}");
+            var client = CreatePlayerAccountClient();
+            var request = client.GetPlayerAccount();
+            var result = await request;
+            var status = request.GetStatus();
+            if(status.StatusCode != Grpc.Core.StatusCode.OK) {
+                Log.Error($"GetPlayerAccount : {status}");
+            }
+            return result;
+        }
 
-            return await next(context);
+        public static async UniTask<IEnumerable<MaskedPlayerAccount>> GetPlayerAccounts(ulong[] ids)
+        {
+            var client = CreatePlayerAccountClient();
+            var request = client.GetPlayerAccounts(ids);
+            var result = await request;
+            var status = request.GetStatus();
+            if(status.StatusCode != Grpc.Core.StatusCode.OK) {
+                Log.Error($"GetPlayerAccount : {status}");
+            }
+            return result;
+        }
+
+        static IPlayerAccountService CreatePlayerAccountClient()
+            => MagicOnionClient.Create<IPlayerAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
+        static IAccountService CreateAccountClient()
+            => CurrentSecurityToken != null
+            ? MagicOnionClient.Create<IAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() })
+            : MagicOnionClient.Create<IAccountService>(GlobalChannel);
+
+        class AppendHeaderFilter : IClientFilter
+        {
+            public async ValueTask<ResponseContext> SendAsync(RequestContext context, Func<RequestContext, ValueTask<ResponseContext>> next)
+            {
+                // add the common header(like authentication).
+                var header = context.CallOptions.Headers;
+                header.Add("Authorization", $"Bearer {CurrentSecurityToken}");
+                return await next(context);
+            }
         }
     }
 }
