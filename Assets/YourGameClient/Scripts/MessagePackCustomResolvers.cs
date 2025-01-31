@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MessagePack;
 using MessagePack.Formatters;
-using YourGameServer.Interface;
+using YourGameServer.Game.Interface;
 
 namespace YourGameClient.MessagePack
 {

@@ -53,6 +53,6 @@ namespace YourGameClient
         }
     }
 
-    [MagicOnionClientGeneration(typeof(YourGameServer.Interface.IAccountService))]
+    [MagicOnionClientGeneration(typeof(YourGameServer.Game.Interface.IAccountService))]
     partial class MagicOnionGeneratedClientInitializer { }
 }
