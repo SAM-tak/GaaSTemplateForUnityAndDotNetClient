@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks;
 using MagicOnion;
 using MagicOnion.Client;
 using CustomUnity;
-using YourGameServer.Interface;
+using YourGameServer.Game.Interface;
 using PlayerPrefs = CustomUnity.PlayerPrefs;
 
 namespace YourGameClient
@@ -39,15 +39,15 @@ namespace YourGameClient
             }
         }
 
-        public const YourGameServer.Interface.DeviceType deviceType =
+        public const YourGameServer.Game.Interface.DeviceType deviceType =
 #if UNITY_IOS
-            YourGameServer.Interface.DeviceType.IOS
+            YourGameServer.Game.Interface.DeviceType.IOS
 #elif UNITY_ANDROID
-            YourGameServer.Interface.DeviceType.Android
+            YourGameServer.Game.Interface.DeviceType.Android
 #elif UNITY_WEBGL
-            YourGameServer.Interface.DeviceType.WebGL
+            YourGameServer.Game.Interface.DeviceType.WebGL
 #else
-            YourGameServer.Interface.DeviceType.StandAlone
+            YourGameServer.Game.Interface.DeviceType.StandAlone
 #endif
         ;
 
