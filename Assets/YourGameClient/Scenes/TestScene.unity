@@ -431,7 +431,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   accept: 0
   contentType: 0
-  ids: 01000000000000000200000000000000030000000000000004000000000000000500000000000000
+  codes:
+  - 96adv5h29x
+  - cbyd3i94sd
+  - egiqp4xp29
   startButton: {fileID: 734630286}
   inputField: {fileID: 641915741}
 --- !u!4 &329135165
@@ -2147,7 +2150,7 @@ PrefabInstance:
     - target: {fileID: 432055921803462464, guid: c225b9602b5a87e439da1b338091ce11,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 185.83806
+      value: 185.83795
       objectReference: {fileID: 0}
     - target: {fileID: 764999778770459311, guid: c225b9602b5a87e439da1b338091ce11,
         type: 3}
@@ -2362,6 +2365,11 @@ PrefabInstance:
     - target: {fileID: 3685062782186718041, guid: c225b9602b5a87e439da1b338091ce11,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3685062782186718041, guid: c225b9602b5a87e439da1b338091ce11,
+        type: 3}
+      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4049650387511293757, guid: c225b9602b5a87e439da1b338091ce11,
