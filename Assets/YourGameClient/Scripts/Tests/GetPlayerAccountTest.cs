@@ -12,7 +12,7 @@ namespace YourGameClient
         public Request.ContentType accept;
         public Request.ContentType contentType;
 
-        public ulong[] ids = new[] { 1UL, 2UL, 3UL, 4UL, 5UL };
+        public string[] codes;
 
         public Button startButton;
         public TMPro.TMP_InputField inputField;
@@ -35,29 +35,56 @@ namespace YourGameClient
             LogInfo("Start");
 
             if(!await Request.LogIn() && !await Request.SignUp()) return;
-            LogInfo($"current player : {Request.CurrentPlayerId} {Request.LatestPlayerCode.ToHyphened()}");
+            LogInfo($"current player : {Request.CurrentPlayerCode.ToHyphened()}");
 
             Request.CurrentAcceptContentType = accept;
             Request.CurrentRequestContentType = contentType;
-            var playerAccount = await Request.GetPlayerAccount();
-            LogInfo($"playerAccount : {playerAccount}");
 
-            var playerAccounts = await Request.GetPlayerAccounts(ids);
-            foreach(var i in playerAccounts) LogInfo($"playerAccount : {i} {i?.Id}");
+            try {
+                var playerAccount = await Request.GetPlayerAccount();
+                LogInfo($"playerAccount : {playerAccount}");
+                LogInfo($"rejason by JsonUtility : {JsonUtility.ToJson(playerAccount)}"); // NG
+                LogInfo($"rejason by Newtonsoft : {Newtonsoft.Json.JsonConvert.SerializeObject(playerAccount)}"); // OK
+                // JsonUtility非力すぎるのでNewtonsoft.Json使うしかない
+            }
+            catch(Exception e) {
+                LogException(e);
+            }
 
-            LogInfo($"rejason by JsonUtility : {JsonUtility.ToJson(playerAccount)}"); // NG
-            LogInfo($"rejason by Newtonsoft : {Newtonsoft.Json.JsonConvert.SerializeObject(playerAccount)}"); // OK
-            // JsonUtility非力すぎるのでNewtonsoft.Json使うしかない
+            try {
+                var playerAccounts = await Request.FindPlayerAccounts(5);
+                foreach(var i in playerAccounts) LogInfo($"playerAccount : {i} {i?.Code}");
+            }
+            catch(Exception e) {
+                LogException(e);
+            }
+
+            try {
+                var playerAccounts = await Request.GetPlayerAccounts(codes);
+                foreach(var i in playerAccounts) LogInfo($"playerAccount : {i} {i?.Code}");
+            }
+            catch(Exception e) {
+                LogException(e);
+            }
 
             await UniTask.Delay(1000);
 
-            var newToken = await Request.RenewToken();
-            LogInfo($"newToken : {newToken}");
+            try {
+                var newToken = await Request.RenewToken();
+                LogInfo($"newToken : {newToken}");
+            }
+            catch(Exception e) {
+                LogException(e);
+            }
 
             await UniTask.Delay(1000);
 
-            await Request.LogOut();
-
+            try {
+                await Request.LogOut();
+            }
+            catch(Exception e) {
+                LogException(e);
+            }
             //done = true;
         }
 

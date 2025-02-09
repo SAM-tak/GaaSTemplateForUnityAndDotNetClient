@@ -51,21 +51,19 @@ namespace YourGameClient
 #endif
         ;
 
-        const string PlayerId = nameof(Request) + ".playerid";
-        const string PlayerCode = nameof(Request) + ".playercode";
-        const string LastDeviceId = nameof(Request) + ".lastdeviceid";
+        const string PlayerCode = nameof(YourGameClient) + "." + nameof(Request) + ".playercode";
+        const string LastDeviceId = nameof(YourGameClient) + "." + nameof(Request) + ".lastdeviceid";
 
         public static ContentType CurrentAcceptContentType = ContentType.MessagePack;
         public static ContentType CurrentRequestContentType = ContentType.MessagePack;
-        public static ulong CurrentPlayerId { get; private set; } = 0;
         public static string CurrentSecurityToken { get; private set; } = null;
         public static DateTime CurrentSecurityTokenPeriod { get; private set; } = DateTime.MaxValue;
-        public static string LatestPlayerCode { get; private set; } = PlayerPrefs.GetString(PlayerCode, string.Empty);
+        public static string CurrentPlayerCode { get; private set; } = PlayerPrefs.GetString(PlayerCode, string.Empty);
 
         /// <summary>
         /// return true when already logged in.
         /// </summary>
-        public static bool IsLoggedIn => CurrentPlayerId > 0;
+        public static bool IsLoggedIn => !string.IsNullOrEmpty(CurrentSecurityToken);
 
         public enum ContentType
         {
@@ -85,11 +83,9 @@ namespace YourGameClient
             Log.Info($"SignUp : Call End {request.GetStatus()}");
             if(result != null) {
                 Log.Info($"SignUp : {result}");
-                CurrentPlayerId = result.Id;
-                LatestPlayerCode = result.Code;
+                CurrentPlayerCode = result.Code;
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
-                PlayerPrefs.Set(PlayerId, result.Id.ToString());
                 PlayerPrefs.Set(PlayerCode, result.Code);
                 PlayerPrefs.Set(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
                 PlayerPrefs.Save();
@@ -104,17 +100,17 @@ namespace YourGameClient
 
         public static async UniTask<bool> LogIn()
         {
-            if(!PlayerPrefs.HasKey(PlayerId)) return false;
+            if(!PlayerPrefs.HasKey(PlayerCode)) return false;
 
-            var playerId = ulong.Parse(PlayerPrefs.Get(PlayerId, "0"));
+            var playerCode = PlayerPrefs.Get(PlayerCode, string.Empty);
             var deviceId = PlayerPrefs.Get(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
             bool deviceChanged = SystemInfo.deviceUniqueIdentifier != deviceId;
             // If valid newDeviceId call failed, it may means already accepted device change on server, try normal login with newDeviceId = null again.
             for(var newDeviceId = deviceChanged ? SystemInfo.deviceUniqueIdentifier : null; deviceId != null; deviceId = newDeviceId, newDeviceId = null) {
                 var client = CreateAccountClient();
-                Log.Info($"LogIn : Call Id = {playerId}, DeviceType = {deviceType}, DeviceId = {deviceId}, NewDeviceId = {newDeviceId}");
+                Log.Info($"LogIn : Call Code = {playerCode}, DeviceType = {deviceType}, DeviceId = {deviceId}, NewDeviceId = {newDeviceId}");
                 var request = client.LogIn(new() {
-                    Id = playerId,
+                    Code = playerCode,
                     DeviceType = deviceType,
                     DeviceId = deviceId,
                     NewDeviceId = newDeviceId
@@ -123,18 +119,12 @@ namespace YourGameClient
                 Log.Info($"LogIn : End {request.GetStatus()}");
                 if(result != null) {
                     Log.Info($"LogIn : {result}");
-                    CurrentPlayerId = playerId;
                     bool needs_save = false;
-                    if(LatestPlayerCode != result.Code) {
-                        PlayerPrefs.Set(PlayerCode, result.Code);
-                        needs_save = true;
-                    }
                     if(deviceChanged) {
                         PlayerPrefs.Set(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
                         needs_save = true;
                     }
                     if(needs_save) PlayerPrefs.Save();
-                    LatestPlayerCode = result.Code;
                     CurrentSecurityToken = result.Token;
                     CurrentSecurityTokenPeriod = result.Period;
                     KeepConnect.Instance.enabled = true;
@@ -156,13 +146,12 @@ namespace YourGameClient
             }
             return false;
         }
-        
+
         public static async UniTask LogOut()
         {
             var client = CreateAccountClient();
             var request = client.LogOut();
             await request;
-            CurrentPlayerId = 0;
             CurrentSecurityToken = null;
             CurrentSecurityTokenPeriod = DateTime.MaxValue;
             KeepConnect.Instance.enabled = false;
@@ -181,14 +170,26 @@ namespace YourGameClient
             return result;
         }
 
-        public static async UniTask<IEnumerable<MaskedPlayerAccount>> GetPlayerAccounts(ulong[] ids)
+        public static async UniTask<IEnumerable<MaskedPlayerAccount>> GetPlayerAccounts(string[] codes)
         {
             var client = CreatePlayerAccountClient();
-            var request = client.GetPlayerAccounts(ids);
+            var request = client.GetPlayerAccounts(codes);
             var result = await request;
             var status = request.GetStatus();
             if(status.StatusCode != Grpc.Core.StatusCode.OK) {
                 Log.Error($"GetPlayerAccount : {status}");
+            }
+            return result;
+        }
+
+        public static async UniTask<IEnumerable<MaskedPlayerAccount>> FindPlayerAccounts(int maxCount)
+        {
+            var client = CreatePlayerAccountClient();
+            var request = client.FindPlayerAccounts(maxCount);
+            var result = await request;
+            var status = request.GetStatus();
+            if(status.StatusCode != Grpc.Core.StatusCode.OK) {
+                Log.Error($"FindPlayerAccounts : {status}");
             }
             return result;
         }
