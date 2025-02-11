@@ -12,7 +12,6 @@ namespace YourGameClient
     public class ChatClient : IChatHubReceiver
     {
         public bool HasJoined => _hasJoined;
-        public Guid CurrentContextId { get; private set; }
 
         public Action<bool> onDisconnectedByServer;
 
@@ -23,12 +22,11 @@ namespace YourGameClient
         IChatHub _streamingClient;
         bool _hasJoined;
         bool _isSelfDisConnected;
+        string  _roomName;
 
-        ChatJoinRequest _joinRequest;
-
-        public async UniTask StartAsync(string roomName, string userName)
+        public async UniTask StartAsync(string roomName)
         {
-            _joinRequest = new() { RoomName = roomName, UserName = userName };
+            _roomName = roomName;
             await InitializeClientAsync();
             await JoinAsync();
             _hasJoined = true;
@@ -109,7 +107,7 @@ namespace YourGameClient
         public async UniTask JoinAsync()
         {
             if(!_hasJoined) {
-                CurrentContextId = await _streamingClient.JoinAsync(_joinRequest);
+                await _streamingClient.JoinAsync(_roomName);
                 _hasJoined = true;
             }
         }
@@ -133,18 +131,18 @@ namespace YourGameClient
         #region Server -> Client (Streaming)
         public void OnJoin(ChatMember member)
         {
-            Log.Info($"{member.UserName} entered the room.".Grey());
+            Log.Info($"{member.PlayerName} {member.PlayerCode} entered the room.".Grey());
         }
 
         public void OnLeave(ChatMember member)
         {
-            Log.Info($"{member.UserName} left the room.".Grey());
+            Log.Info($"{member.PlayerName} {member.PlayerCode} left the room.".Grey());
         }
 
         public void OnRecievedMessage(ChatMessage message)
         {
             onRecievedMessage?.Invoke(message);
-            Log.Info($"{message.Member.UserName}:{message.Message}".Grey());
+            Log.Info($"{message.Member.PlayerName}:{message.Message}".Grey());
         }
         #endregion
     }

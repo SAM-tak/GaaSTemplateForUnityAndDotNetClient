@@ -8,7 +8,7 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
     // A hub must inherit `IStreamingHub<TSelf, TReceiver>`.
     public interface IChatHub : IStreamingHub<IChatHub, IChatHubReceiver>
     {
-        Task<Guid> JoinAsync(ChatJoinRequest request);
+        Task JoinAsync(string roomName);
 
         Task LeaveAsync();
 

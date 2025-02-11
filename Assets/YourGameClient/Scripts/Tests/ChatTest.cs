@@ -14,7 +14,6 @@ namespace YourGameClient
         public Button sendMessageButton;
         public TMP_Text joinOrLeaveButtonText;
         public TMP_InputField input;
-        public TMP_InputField nameInput;
         public TMP_InputField addrInputField;
 
         readonly ChatClient _chatClient = new();
@@ -35,14 +34,13 @@ namespace YourGameClient
 
             joinOrLeaveButton.interactable = true;
 
-            while(!_start) await UniTask.NextFrame();
+            await UniTask.WaitUntil(() => _start);
 
             addrInputField.interactable = false;
-            nameInput.interactable = false;
             LogInfo($"server : {Request.ServerAddr}");
             if(!await Request.LogIn() && !await Request.SignUp()) return;
             LogInfo($"current player : {Request.CurrentPlayerCode.ToHyphened()}");
-            await _chatClient.StartAsync(RoomName, nameInput.text);
+            await _chatClient.StartAsync(RoomName);
             UpdateUI(true);
         }
 
@@ -67,6 +65,7 @@ namespace YourGameClient
         public async void JoinOrLeave()
         {
             if(!_start) {
+                Request.ServerAddr = addrInputField.text;
                 _start = true;
                 return;
             }
@@ -101,8 +100,8 @@ namespace YourGameClient
         {
             ChatLogDataSource.AddLog(new() {
                 dateTime = message.DateTime,
-                self = _chatClient.CurrentContextId == message.Member.ContextId,
-                name = message.Member.UserName,
+                self = Request.CurrentPlayerCode == message.Member.PlayerCode,
+                name = message.Member.PlayerName,
                 message = message.Message
             });
         }

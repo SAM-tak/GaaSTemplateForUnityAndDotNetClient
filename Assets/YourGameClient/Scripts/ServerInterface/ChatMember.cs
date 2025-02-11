@@ -11,8 +11,8 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
     public struct ChatMember
     {
         [Key(0)]
-        public string UserName { get; set; }
+        public string PlayerName { get; set; }
         [Key(1)]
-        public Guid ContextId { get; set; }
+        public string PlayerCode { get; set; }
     }
 }

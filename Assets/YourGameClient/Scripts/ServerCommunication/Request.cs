@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+#if UNITY_EDITOR
+using Unity.Multiplayer.Playmode;
+#endif
 using Cysharp.Threading.Tasks;
 using MagicOnion;
 using MagicOnion.Client;
@@ -54,8 +57,26 @@ namespace YourGameClient
 #endif
         ;
 
+#if UNITY_EDITOR
+        const string PlayerCodeBase = nameof(YourGameClient) + "." + nameof(Request) + ".playercode";
+        const string LastDeviceIdBase = nameof(YourGameClient) + "." + nameof(Request) + ".lastdeviceid";
+
+        static string PlayModePlayerTagSuffix {
+            get {
+                var tag = CurrentPlayer.ReadOnlyTags().FirstOrDefault(x => x.StartsWith("Player"));
+                if(!string.IsNullOrWhiteSpace(tag)) {
+                    return $".{tag}";
+                }
+                return string.Empty;
+            }
+        }
+
+        static string PlayerCode { get; } = $"{PlayerCodeBase}{PlayModePlayerTagSuffix}";
+        static string LastDeviceId { get; } = $"{LastDeviceIdBase}{PlayModePlayerTagSuffix}";
+#else
         const string PlayerCode = nameof(YourGameClient) + "." + nameof(Request) + ".playercode";
         const string LastDeviceId = nameof(YourGameClient) + "." + nameof(Request) + ".lastdeviceid";
+#endif
 
         public static ContentType CurrentAcceptContentType = ContentType.MessagePack;
         public static ContentType CurrentRequestContentType = ContentType.MessagePack;
