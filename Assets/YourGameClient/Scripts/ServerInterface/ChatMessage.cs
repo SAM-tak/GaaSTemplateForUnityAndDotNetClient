@@ -8,7 +8,7 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
     /// Message information
     /// </summary>
     [MessagePackObject]
-    public class ChatMessage
+    public record ChatMessage
     {
         [Key(0)]
         public ChatMember Member { get; set; }
