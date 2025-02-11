@@ -9,11 +9,14 @@ using CustomUnity;
 
 namespace YourGameClient
 {
-    public class ChatHub : IChatHubReceiver
+    public class ChatClient : IChatHubReceiver
     {
         public bool HasJoined => _hasJoined;
+        public Guid CurrentContextId { get; private set; }
 
         public Action<bool> onDisconnectedByServer;
+
+        public Action<ChatMessage> onRecievedMessage;
 
         readonly CancellationTokenSource _shutdownCancellation = new();
         ChannelBase _channel;
@@ -50,8 +53,7 @@ namespace YourGameClient
                 try {
                     Log.Info($"Connecting to the server...");
                     _streamingClient = await StreamingHubClient.ConnectAsync<IChatHub, IChatHubReceiver>(
-                        _channel, this,
-                        option: new(headers: new() { new("Authorization", $"Bearer {Request.CurrentSecurityToken}") }),
+                        _channel, this, option: new(headers: new() { new("Authorization", Request.CurrentSecurityToken) }),
                         cancellationToken: _shutdownCancellation.Token
                     );
                     RegisterDisconnectEvent(_streamingClient);
@@ -95,8 +97,7 @@ namespace YourGameClient
         {
             Log.Info($"Reconnecting to the server...");
             _streamingClient = await StreamingHubClient.ConnectAsync<IChatHub, IChatHubReceiver>(
-                _channel, this,
-                option: new(headers: new() { new("Authorization", $"Bearer {Request.CurrentSecurityToken}") })
+                _channel, this, option: new(headers: new() { new("Authorization", Request.CurrentSecurityToken) })
             );
             RegisterDisconnectEvent(_streamingClient);
             Log.Info("Reconnected.");
@@ -108,7 +109,7 @@ namespace YourGameClient
         public async UniTask JoinAsync()
         {
             if(!_hasJoined) {
-                await _streamingClient.JoinAsync(_joinRequest);
+                CurrentContextId = await _streamingClient.JoinAsync(_joinRequest);
                 _hasJoined = true;
             }
         }
@@ -130,19 +131,20 @@ namespace YourGameClient
         #endregion
 
         #region Server -> Client (Streaming)
-        public void OnJoin(string name)
+        public void OnJoin(ChatMember member)
         {
-            Log.Info($"{name} entered the room.".Grey());
+            Log.Info($"{member.UserName} entered the room.".Grey());
         }
 
-        public void OnLeave(string name)
+        public void OnLeave(ChatMember member)
         {
-            Log.Info($"{name} left the room.".Grey());
+            Log.Info($"{member.UserName} left the room.".Grey());
         }
 
-        public void OnSendMessage(ChatMessage message)
+        public void OnRecievedMessage(ChatMessage message)
         {
-            Log.Info($"{message.UserName}:{message.Message}".Grey());
+            onRecievedMessage?.Invoke(message);
+            Log.Info($"{message.Member.UserName}:{message.Message}".Grey());
         }
         #endregion
     }

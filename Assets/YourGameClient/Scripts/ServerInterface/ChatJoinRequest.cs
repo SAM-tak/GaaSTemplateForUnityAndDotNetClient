@@ -1,4 +1,4 @@
-#nullable disable
+#nullable disable // Server needs this
 using MessagePack;
 
 namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace yet

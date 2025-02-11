@@ -1,4 +1,5 @@
-#nullable disable
+#nullable disable // Server needs this
+using System; // Unity needs this
 using System.Threading.Tasks; // Unity needs this
 using MagicOnion;
 
@@ -7,7 +8,7 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
     // A hub must inherit `IStreamingHub<TSelf, TReceiver>`.
     public interface IChatHub : IStreamingHub<IChatHub, IChatHubReceiver>
     {
-        Task JoinAsync(ChatJoinRequest request);
+        Task<Guid> JoinAsync(ChatJoinRequest request);
 
         Task LeaveAsync();
 
@@ -16,8 +17,8 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
 
     public interface IChatHubReceiver
     {
-        void OnJoin(string userName);
-        void OnLeave(string userName);
-        void OnSendMessage(ChatMessage message);
+        void OnJoin(ChatMember member);
+        void OnLeave(ChatMember member);
+        void OnRecievedMessage(ChatMessage message);
     }
 }

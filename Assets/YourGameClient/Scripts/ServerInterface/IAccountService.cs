@@ -1,4 +1,4 @@
-#nullable disable
+#nullable disable // Server needs this
 using MagicOnion;
 using MessagePack;
 

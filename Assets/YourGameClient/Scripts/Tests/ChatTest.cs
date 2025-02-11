@@ -1,17 +1,14 @@
 using System;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
 using TMPro;
-using MagicOnion;
-using MagicOnion.Client;
 using YourGameServer.Game.Interface;
 using YourGameClient.Extensions;
 
 namespace YourGameClient
 {
-    public class ChatClient : MonoBehaviour, IChatHubReceiver
+    public class ChatTest : MonoBehaviour
     {
         public Button joinOrLeaveButton;
         public Button sendMessageButton;
@@ -20,7 +17,7 @@ namespace YourGameClient
         public TMP_InputField nameInput;
         public TMP_InputField addrInputField;
 
-        readonly ChatHub _chatHub = new();
+        readonly ChatClient _chatClient = new();
         bool _start = false;
 
         const string RoomName = "Sample Room";
@@ -45,14 +42,14 @@ namespace YourGameClient
             LogInfo($"server : {Request.ServerAddr}");
             if(!await Request.LogIn() && !await Request.SignUp()) return;
             LogInfo($"current player : {Request.CurrentPlayerCode.ToHyphened()}");
-            await _chatHub.StartAsync(RoomName, nameInput.text);
+            await _chatClient.StartAsync(RoomName, nameInput.text);
             UpdateUI(true);
         }
 
         async void OnDestroy()
         {
             // Clean up Hub and channel
-            await _chatHub.ShutdownAsync();
+            await _chatClient.ShutdownAsync();
             if(Request.IsLoggedIn) await Request.LogOut().Timeout(TimeSpan.FromSeconds(1));
             await Request.ShutdownAsync();
         }
@@ -63,28 +60,29 @@ namespace YourGameClient
             sendMessageButton.interactable = connected;
             input.interactable = connected;
             joinOrLeaveButtonText.text = connected ? "Leave" : "Join";
+            _chatClient.onRecievedMessage -= OnRecievedMessage;
+            if(connected) _chatClient.onRecievedMessage += OnRecievedMessage;
         }
 
-        #region Client -> Server (Streaming)
         public async void JoinOrLeave()
         {
             if(!_start) {
                 _start = true;
                 return;
             }
-            if(_chatHub.HasJoined) {
-                await _chatHub.LeaveAsync();
+            if(_chatClient.HasJoined) {
+                await _chatClient.LeaveAsync();
                 UpdateUI(false);
             }
             else {
-                await _chatHub.JoinAsync();
+                await _chatClient.JoinAsync();
                 UpdateUI(true);
             }
         }
 
         public async void SendMessage()
         {
-            if(!_chatHub.HasJoined) {
+            if(!_chatClient.HasJoined) {
                 LogError("Not joined yet");
                 return;
             }
@@ -92,29 +90,21 @@ namespace YourGameClient
             input.interactable = false;
             sendMessageButton.interactable = false;
 
-            await _chatHub.SendMessageAsync(input.text);
+            await _chatClient.SendMessageAsync(input.text);
 
             input.text = string.Empty;
             input.interactable = true;
             sendMessageButton.interactable = true;
         }
-        #endregion
 
-        #region Server -> Client (Streaming)
-        public void OnJoin(string name)
+        public void OnRecievedMessage(ChatMessage message)
         {
-            LogInfo($"\n<color=grey>{name} entered the room.</color>");
+            ChatLogDataSource.AddLog(new() {
+                dateTime = message.DateTime,
+                self = _chatClient.CurrentContextId == message.Member.ContextId,
+                name = message.Member.UserName,
+                message = message.Message
+            });
         }
-
-        public void OnLeave(string name)
-        {
-            LogInfo($"\n<color=grey>{name} left the room.</color>");
-        }
-
-        public void OnSendMessage(ChatMessage message)
-        {
-            LogInfo($"\n{message.UserName}:{message.Message}");
-        }
-        #endregion
     }
 }

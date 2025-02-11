@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using MagicOnion;
@@ -67,14 +68,26 @@ namespace YourGameClient
         /// </summary>
         public static bool IsLoggedIn => !string.IsNullOrEmpty(CurrentSecurityToken);
 
+        public static bool IsTokenExpired => CurrentSecurityTokenPeriod > DateTime.UtcNow;
+
+        static IAccountService _accountService;
+        static IPlayerAccountService _playerAccountService;
+
         public enum ContentType
         {
             MessagePack,
             JSON,
         }
 
+        static void InvalidateCached()
+        {
+            _accountService = null;
+            _playerAccountService = null;
+        }
+
         public static async UniTask ShutdownAsync()
         {
+            InvalidateCached();
             if(_globalChannel != null) {
                 var task = _globalChannel.ShutdownAsync();
                 _globalChannel = null;
@@ -147,8 +160,8 @@ namespace YourGameClient
 
         public static async UniTask<bool> RenewToken()
         {
-            var client = CreateAccountClient();
-            var result = await client.RenewToken();
+            _accountService ??= CreateAccountClient();
+            var result = await _accountService.RenewToken();
             if(result != null) {
                 Log.Info($"RenewToken : {result}");
                 CurrentSecurityToken = result.Token;
@@ -160,9 +173,10 @@ namespace YourGameClient
 
         public static async UniTask LogOut()
         {
-            var client = CreateAccountClient();
-            var request = client.LogOut();
+            _accountService ??= CreateAccountClient();
+            var request = _accountService.LogOut();
             await request;
+            InvalidateCached();
             CurrentSecurityToken = null;
             CurrentSecurityTokenPeriod = DateTime.MaxValue;
             KeepConnect.Instance.enabled = false;
@@ -171,8 +185,8 @@ namespace YourGameClient
 
         public static async UniTask<FormalPlayerAccount> GetPlayerAccount()
         {
-            var client = CreatePlayerAccountClient();
-            var request = client.GetPlayerAccount();
+            _playerAccountService ??= CreatePlayerAccountClient();
+            var request = _playerAccountService.GetPlayerAccount();
             var result = await request;
             var status = request.GetStatus();
             if(status.StatusCode != Grpc.Core.StatusCode.OK) {
@@ -183,8 +197,8 @@ namespace YourGameClient
 
         public static async UniTask<IEnumerable<MaskedPlayerAccount>> GetPlayerAccounts(string[] codes)
         {
-            var client = CreatePlayerAccountClient();
-            var request = client.GetPlayerAccounts(codes);
+            _playerAccountService ??= CreatePlayerAccountClient();
+            var request = _playerAccountService.GetPlayerAccounts(codes);
             var result = await request;
             var status = request.GetStatus();
             if(status.StatusCode != Grpc.Core.StatusCode.OK) {
@@ -195,8 +209,8 @@ namespace YourGameClient
 
         public static async UniTask<IEnumerable<MaskedPlayerAccount>> FindPlayerAccounts(int maxCount)
         {
-            var client = CreatePlayerAccountClient();
-            var request = client.FindPlayerAccounts(maxCount);
+            _playerAccountService ??= CreatePlayerAccountClient();
+            var request = _playerAccountService.FindPlayerAccounts(maxCount);
             var result = await request;
             var status = request.GetStatus();
             if(status.StatusCode != Grpc.Core.StatusCode.OK) {
@@ -217,9 +231,28 @@ namespace YourGameClient
         {
             public async ValueTask<ResponseContext> SendAsync(RequestContext context, Func<RequestContext, ValueTask<ResponseContext>> next)
             {
-                // add the common header(like authentication).
-                var header = context.CallOptions.Headers;
-                header.Add("Authorization", $"Bearer {CurrentSecurityToken}");
+                // Reget token instantly sample
+                // if(IsTokenExpired && await LogIn()) {
+                //     if(context.CallOptions.Headers?.FirstOrDefault(
+                //         x => string.Equals(x.Key, "Authorization", StringComparison.OrdinalIgnoreCase)) is { } entry
+                //     ) {
+                //         context.CallOptions.Headers?.Remove(entry);
+                //     }
+                // }
+                // But our game can't do this. This breaks our policy that one account can have multiple devices,
+                // but can play with only one device at same time. (banning parallel play)
+
+                var authHeader = context.CallOptions.Headers?.FirstOrDefault(
+                    x => string.Equals(x.Key, "Authorization", StringComparison.OrdinalIgnoreCase)
+                );
+                if(authHeader == null) {
+                    context.CallOptions.Headers?.Add("Authorization", CurrentSecurityToken);
+                }
+                else if(authHeader.Value != CurrentSecurityToken) {
+                    context.CallOptions.Headers.Remove(authHeader);
+                    context.CallOptions.Headers.Add("Authorization", CurrentSecurityToken);
+                }
+
                 return await next(context);
             }
         }

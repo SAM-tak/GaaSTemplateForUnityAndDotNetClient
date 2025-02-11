@@ -5,16 +5,14 @@ using MessagePack;
 namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace yet
 {
     /// <summary>
-    /// Message information
+    /// Room participation information
     /// </summary>
     [MessagePackObject]
-    public class ChatMessage
+    public struct ChatMember
     {
         [Key(0)]
-        public ChatMember Member { get; set; }
+        public string UserName { get; set; }
         [Key(1)]
-        public DateTime DateTime { get; set; }
-        [Key(2)]
-        public string Message { get; set; }
+        public Guid ContextId { get; set; }
     }
 }
