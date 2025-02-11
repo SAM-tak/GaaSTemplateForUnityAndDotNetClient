@@ -14,9 +14,12 @@ namespace YourGameClient
 {
     static class MagicOnionInitializer
     {
+        public static bool Done { get; private set; }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static async UniTask OnRuntimeInitialize()
         {
+            Done = false;
 #if USE_DEV_CERT
 # if UNITY_ANDROID && !UNITY_EDITOR
             Log.Info($"ReadDevCert {Path.Combine(Application.streamingAssetsPath, "ca.crt")}");
@@ -50,6 +53,7 @@ namespace YourGameClient
             }));
             await Task.CompletedTask;
 #endif
+            Done = true;
         }
     }
 

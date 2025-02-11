@@ -24,13 +24,14 @@ namespace YourGameClient
 
             LogInfo($"deviceUniqueIdentifier : {SystemInfo.deviceUniqueIdentifier}");
 
-            while(!FirebaseInitializer.Done) await UniTask.NextFrame();
+            await UniTask.WaitUntil(() => MagicOnionInitializer.Done);
+            await UniTask.WaitUntil(() => FirebaseInitializer.Done);
 
             LogInfo("Wait for Start Button Push");
 
             startButton.interactable = true;
 
-            while(!start) await UniTask.NextFrame();
+            await UniTask.WaitUntil(() => _start);
 
             LogInfo("Start");
 
@@ -93,22 +94,25 @@ namespace YourGameClient
         {
             // Call the exception-throwing method here so that it's run
             // every frame update
-            if(done) ThrowExceptionEvery60Updates2();
+            if(_done) ThrowExceptionEvery60Updates2();
         }
 
-        //async void OnDestroy()
-        //{
-        //    if(Request.IsLoggedIn) await Request.LogOut().Timeout(TimeSpan.FromSeconds(10));
-        //}
+        async void OnDestroy()
+        {
+            if(Request.IsLoggedIn) await Request.LogOut().Timeout(TimeSpan.FromSeconds(1));
+            await Request.ShutdownAsync();
+        }
 
-        bool start;
-        bool done;
+        bool _start;
+        bool _done;
 
         public void StartProc()
         {
             LogInfo("StartProc");
             Request.ServerAddr = inputField.text;
-            start = true;
+            _start = true;
+            startButton.interactable = false;
+            inputField.interactable = false;
         }
 
         int updatesBeforeException = 60;

@@ -1,4 +1,5 @@
 #nullable disable
+using System.Threading.Tasks; // Unity needs this
 using MagicOnion;
 
 namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace yet
@@ -11,8 +12,6 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
         Task LeaveAsync();
 
         Task SendMessageAsync(string message);
-
-        Task GenerateException(string message);
     }
 
     public interface IChatHubReceiver

@@ -31,10 +31,12 @@ namespace YourGameClient
         }
         public const int serverRpcPort = 7143;
         public const string rpcScheme = "https";
+        public static string ServerURL => $"{rpcScheme}://{ServerAddr}:{serverRpcPort}";
+
         static GrpcChannelx _globalChannel = null;
         public static GrpcChannelx GlobalChannel {
             get {
-                _globalChannel ??= GrpcChannelx.ForAddress($"{rpcScheme}://{ServerAddr}:{serverRpcPort}");
+                _globalChannel ??= GrpcChannelx.ForAddress(ServerURL);
                 return _globalChannel;
             }
         }
@@ -69,6 +71,15 @@ namespace YourGameClient
         {
             MessagePack,
             JSON,
+        }
+
+        public static async UniTask ShutdownAsync()
+        {
+            if(_globalChannel != null) {
+                var task = _globalChannel.ShutdownAsync();
+                _globalChannel = null;
+                await task;
+            }
         }
 
         public static async UniTask<bool> SignUp()
@@ -194,12 +205,13 @@ namespace YourGameClient
             return result;
         }
 
-        static IPlayerAccountService CreatePlayerAccountClient()
-            => MagicOnionClient.Create<IPlayerAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() });
         static IAccountService CreateAccountClient()
             => CurrentSecurityToken != null
-            ? MagicOnionClient.Create<IAccountService>(GlobalChannel, new IClientFilter[] { new AppendHeaderFilter() })
+            ? MagicOnionClient.Create<IAccountService>(GlobalChannel, new[] { new AppendHeaderFilter() })
             : MagicOnionClient.Create<IAccountService>(GlobalChannel);
+
+        static IPlayerAccountService CreatePlayerAccountClient()
+            => MagicOnionClient.Create<IPlayerAccountService>(GlobalChannel, new[] { new AppendHeaderFilter() });
 
         class AppendHeaderFilter : IClientFilter
         {
