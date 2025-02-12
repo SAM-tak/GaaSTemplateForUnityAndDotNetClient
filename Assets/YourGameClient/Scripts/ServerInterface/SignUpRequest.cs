@@ -18,10 +18,12 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
     public record SignUpRequestResult
     {
         [Key(0)]
-        public string Code { get; init; }
-        [Key(1)]
         public string Token { get; init; }
-        [Key(2)]
+        [Key(1)]
         public DateTime Period { get; init; }
+        [Key(2)]
+        public ulong Id { get; init; }
+        [Key(3)]
+        public string Code { get; init; }
     }
 }

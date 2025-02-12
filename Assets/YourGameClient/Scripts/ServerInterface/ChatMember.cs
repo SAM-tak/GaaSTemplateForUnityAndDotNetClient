@@ -8,11 +8,13 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
     /// Room participation information
     /// </summary>
     [MessagePackObject]
-    public struct ChatMember
+    public record ChatMember
     {
         [Key(0)]
-        public string PlayerName { get; set; }
+        public string PlayerName { get; init; }
         [Key(1)]
-        public string PlayerCode { get; set; }
+        public string PlayerCode { get; init; }
+        [Key(2)]
+        public IconBlob Icon { get; init; }
     }
 }

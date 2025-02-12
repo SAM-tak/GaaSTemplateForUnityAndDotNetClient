@@ -7,6 +7,6 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
     public record IconBlob
     {
         [Key(0)]
-        public string address;
+        public string Url { get; init; }
     }
 }
