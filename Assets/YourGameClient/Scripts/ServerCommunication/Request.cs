@@ -173,6 +173,10 @@ namespace YourGameClient
                         PlayerPrefs.Set(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
                         needs_save = true;
                     }
+                    if(CurrentPlayerCode != result.Code) {
+                        PlayerPrefs.Set(PlayerCode, result.Code);
+                        needs_save = true;
+                    }
                     if(needs_save) PlayerPrefs.Save();
                     CurrentSecurityToken = result.Token;
                     CurrentSecurityTokenPeriod = result.Period;
