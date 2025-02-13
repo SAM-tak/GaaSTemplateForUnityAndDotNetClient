@@ -85,7 +85,7 @@ namespace YourGameClient
         public static ContentType CurrentRequestContentType = ContentType.MessagePack;
         public static string CurrentSecurityToken { get; private set; } = null;
         public static DateTime CurrentSecurityTokenPeriod { get; private set; } = DateTime.MaxValue;
-        public static string CurrentPlayerCode { get; private set; } = PlayerPrefs.GetString(PlayerCode, string.Empty);
+        public static string CurrentPlayerCode => PlayerPrefs.GetString(PlayerCode, string.Empty);
 
         /// <summary>
         /// return true when already logged in.
@@ -131,7 +131,6 @@ namespace YourGameClient
             Log.Info($"SignUp : Call End {request.GetStatus()}");
             if(result != null) {
                 Log.Info($"SignUp : {result}");
-                CurrentPlayerCode = result.Code;
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
                 PlayerPrefs.Set(LoginKey, result.LoginKey);
