@@ -22,7 +22,7 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
         [Key(1)]
         public DateTime Period { get; init; }
         [Key(2)]
-        public ulong Id { get; init; }
+        public string LoginKey { get; init; }
         [Key(3)]
         public string Code { get; init; }
     }

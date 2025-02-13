@@ -58,7 +58,7 @@ namespace YourGameClient
         ;
 
 #if UNITY_EDITOR
-        const string PlayerIdBase = nameof(YourGameClient) + "." + nameof(Request) + ".playerid";
+        const string LoginKeyBase = nameof(YourGameClient) + "." + nameof(Request) + ".loginkey";
         const string PlayerCodeBase = nameof(YourGameClient) + "." + nameof(Request) + ".playercode";
         const string LastDeviceIdBase = nameof(YourGameClient) + "." + nameof(Request) + ".lastdeviceid";
 
@@ -72,11 +72,11 @@ namespace YourGameClient
             }
         }
 
-        static string PlayerId { get; } = $"{PlayerIdBase}{PlayModePlayerTagSuffix}";
+        static string LoginKey { get; } = $"{LoginKeyBase}{PlayModePlayerTagSuffix}";
         static string PlayerCode { get; } = $"{PlayerCodeBase}{PlayModePlayerTagSuffix}";
         static string LastDeviceId { get; } = $"{LastDeviceIdBase}{PlayModePlayerTagSuffix}";
 #else
-        const string PlayerId = nameof(YourGameClient) + "." + nameof(Request) + ".playerid";
+        const string LoginKey = nameof(YourGameClient) + "." + nameof(Request) + ".loginkey";
         const string PlayerCode = nameof(YourGameClient) + "." + nameof(Request) + ".playercode";
         const string LastDeviceId = nameof(YourGameClient) + "." + nameof(Request) + ".lastdeviceid";
 #endif
@@ -134,7 +134,7 @@ namespace YourGameClient
                 CurrentPlayerCode = result.Code;
                 CurrentSecurityToken = result.Token;
                 CurrentSecurityTokenPeriod = result.Period;
-                PlayerPrefs.Set(PlayerId, result.Id.ToString());
+                PlayerPrefs.Set(LoginKey, result.LoginKey);
                 PlayerPrefs.Set(PlayerCode, result.Code);
                 PlayerPrefs.Set(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
                 PlayerPrefs.Save();
@@ -149,17 +149,17 @@ namespace YourGameClient
 
         public static async UniTask<bool> LogIn()
         {
-            if(!PlayerPrefs.HasKey(PlayerId)) return false;
+            if(!PlayerPrefs.HasKey(LoginKey)) return false;
 
-            var playerId = ulong.Parse(PlayerPrefs.Get(PlayerId, "0"));
+            var loginKey = PlayerPrefs.Get(LoginKey, string.Empty);
             var deviceId = PlayerPrefs.Get(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
             bool deviceChanged = SystemInfo.deviceUniqueIdentifier != deviceId;
             // If valid newDeviceId call failed, it may means already accepted device change on server, try normal login with newDeviceId = null again.
             for(var newDeviceId = deviceChanged ? SystemInfo.deviceUniqueIdentifier : null; deviceId != null; deviceId = newDeviceId, newDeviceId = null) {
                 var client = CreateAccountClient();
-                Log.Info($"LogIn : Call Id = {playerId}, DeviceType = {deviceType}, DeviceId = {deviceId}, NewDeviceId = {newDeviceId}");
+                Log.Info($"LogIn : Call LoginKey = {loginKey}, DeviceType = {deviceType}, DeviceId = {deviceId}, NewDeviceId = {newDeviceId}");
                 var request = client.LogIn(new() {
-                    Id = playerId,
+                    LoginKey = loginKey,
                     DeviceType = deviceType,
                     DeviceId = deviceId,
                     NewDeviceId = newDeviceId
