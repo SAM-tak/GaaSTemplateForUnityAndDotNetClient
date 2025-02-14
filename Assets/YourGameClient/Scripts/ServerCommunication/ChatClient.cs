@@ -131,12 +131,12 @@ namespace YourGameClient
         #region Server -> Client (Streaming)
         public void OnJoin(ChatMember member)
         {
-            Log.Info($"{member.PlayerName} {member.PlayerCode} entered the room.".Grey());
+            Log.Info($"{member.PlayerName} ({member.PlayerCode}) entered the room.".Grey());
         }
 
         public void OnLeave(ChatMember member)
         {
-            Log.Info($"{member.PlayerName} {member.PlayerCode} left the room.".Grey());
+            Log.Info($"{member.PlayerName} ({member.PlayerCode}) left the room.".Grey());
         }
 
         public void OnRecievedMessage(ChatMessage message)
