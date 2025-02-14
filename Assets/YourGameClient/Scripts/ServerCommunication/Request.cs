@@ -121,11 +121,16 @@ namespace YourGameClient
 
         public static async UniTask<bool> SignUp()
         {
+            if(PlayerPrefs.HasKey(LoginKey)) {
+                Log.Error($"Already signed up. if you create a new account, call 'ClearLoginInfo' first.");
+                return false;
+            }
+
             var client = CreateAccountClient();
             Log.Info($"SignUp : Call DeviceType = {deviceType}, DeviceId = {SystemInfo.deviceUniqueIdentifier}");
             var request = client.SignUp(new() {
                 DeviceType = deviceType,
-                DeviceId = SystemInfo.deviceUniqueIdentifier
+                DeviceIdentifier = SystemInfo.deviceUniqueIdentifier
             });
             var result = await request;
             Log.Info($"SignUp : Call End {request.GetStatus()}");
@@ -151,17 +156,17 @@ namespace YourGameClient
             if(!PlayerPrefs.HasKey(LoginKey)) return false;
 
             var loginKey = PlayerPrefs.Get(LoginKey, string.Empty);
-            var deviceId = PlayerPrefs.Get(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
-            bool deviceChanged = SystemInfo.deviceUniqueIdentifier != deviceId;
+            var deviceIdentifier = PlayerPrefs.Get(LastDeviceId, SystemInfo.deviceUniqueIdentifier);
+            bool deviceChanged = SystemInfo.deviceUniqueIdentifier != deviceIdentifier;
             // If valid newDeviceId call failed, it may means already accepted device change on server, try normal login with newDeviceId = null again.
-            for(var newDeviceId = deviceChanged ? SystemInfo.deviceUniqueIdentifier : null; deviceId != null; deviceId = newDeviceId, newDeviceId = null) {
+            for(var newDeviceIdentifier = deviceChanged ? SystemInfo.deviceUniqueIdentifier : null; deviceIdentifier != null; deviceIdentifier = newDeviceIdentifier, newDeviceIdentifier = null) {
                 var client = CreateAccountClient();
-                Log.Info($"LogIn : Call LoginKey = {loginKey}, DeviceType = {deviceType}, DeviceId = {deviceId}, NewDeviceId = {newDeviceId}");
+                Log.Info($"LogIn : Call LoginKey = {loginKey}, DeviceType = {deviceType}, DeviceIdentifier = {deviceIdentifier}, NewDeviceIdentifier = {newDeviceIdentifier}");
                 var request = client.LogIn(new() {
                     LoginKey = loginKey,
                     DeviceType = deviceType,
-                    DeviceId = deviceId,
-                    NewDeviceId = newDeviceId
+                    DeviceIdentifier = deviceIdentifier,
+                    NewDeviceIdentifier = newDeviceIdentifier
                 });
                 var result = await request;
                 Log.Info($"LogIn : End {request.GetStatus()}");
@@ -209,6 +214,13 @@ namespace YourGameClient
             CurrentSecurityTokenPeriod = DateTime.MaxValue;
             KeepConnect.Instance.enabled = false;
             Log.Info($"LogOut {request.GetStatus()}");
+        }
+
+        public static void ClearLoginInfo()
+        {
+            PlayerPrefs.DeleteKey(LoginKey);
+            PlayerPrefs.DeleteKey(PlayerCode);
+            PlayerPrefs.DeleteKey(LastDeviceId);
         }
 
         public static async UniTask<FormalPlayerAccount> GetPlayerAccount()
