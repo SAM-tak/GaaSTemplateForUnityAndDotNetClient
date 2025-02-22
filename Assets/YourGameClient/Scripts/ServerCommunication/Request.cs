@@ -57,6 +57,18 @@ namespace YourGameClient
 #endif
         ;
 
+        public const YourGameServer.Game.Interface.Store officialStore =
+#if UNITY_IOS
+            YourGameServer.Game.Interface.Store.AppStore
+#elif UNITY_ANDROID
+            YourGameServer.Game.Interface.Store.GooglePlay
+#elif UNITY_WEBGL
+            YourGameServer.Game.Interface.Store.DMM
+#else
+            YourGameServer.Game.Interface.Store.AppStore
+#endif
+        ;
+
 #if UNITY_EDITOR
         const string LoginKeyBase = nameof(YourGameClient) + "." + nameof(Request) + ".loginkey";
         const string PlayerCodeBase = nameof(YourGameClient) + "." + nameof(Request) + ".playercode";
@@ -130,7 +142,8 @@ namespace YourGameClient
             Log.Info($"SignUp : Call DeviceType = {deviceType}, DeviceId = {SystemInfo.deviceUniqueIdentifier}");
             var request = client.SignUp(new() {
                 DeviceType = deviceType,
-                DeviceIdentifier = SystemInfo.deviceUniqueIdentifier
+                DeviceIdentifier = SystemInfo.deviceUniqueIdentifier,
+                OfficialStore = officialStore
             });
             var result = await request;
             Log.Info($"SignUp : Call End {request.GetStatus()}");

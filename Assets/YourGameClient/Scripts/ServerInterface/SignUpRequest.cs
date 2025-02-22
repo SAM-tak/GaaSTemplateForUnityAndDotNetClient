@@ -11,6 +11,8 @@ namespace YourGameServer.Game.Interface // Unity cannot use file-scope namespace
         public DeviceType DeviceType { get; init; }
         [Key(1)]
         public string DeviceIdentifier { get; init; } // Unity's SystemInfo.deviceUniqueIdentifier
+        [Key(2)]
+        public Store OfficialStore { get; init; }
         // 何らかのOpenIDを色々受け付ける
     }
 
