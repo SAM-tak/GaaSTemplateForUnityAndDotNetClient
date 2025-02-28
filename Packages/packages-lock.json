@@ -8,7 +8,7 @@
       "url": "https://package.openupm.com"
     },
     "com.cysharp.magiconion": {
-      "version": "6.1.6",
+      "version": "6.1.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -379,7 +379,7 @@
       "url": "https://unitynuget-registry.azurewebsites.net"
     },
     "org.nuget.system.io.pipelines": {
-      "version": "9.0.1",
+      "version": "9.0.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {

@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.bgtools.playerprefseditor": "1.2.2",
-    "com.cysharp.magiconion": "6.1.6",
+    "com.cysharp.magiconion": "6.1.7",
     "com.cysharp.unitask": "2.5.10",
     "com.cysharp.yetanotherhttphandler": "1.10.0",
     "com.github.messagepack-csharp": "https://github.com/MessagePack-CSharp/MessagePack-CSharp.git?path=src/MessagePack.UnityClient/Assets/Scripts/MessagePack",
@@ -29,7 +29,7 @@
     "net.sam-tak.customunity": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity",
     "org.nuget.grpc.net.client": "2.67.0",
     "org.nuget.microsoft.net.stringtools": "1.0.0",
-    "org.nuget.system.io.pipelines": "9.0.1",
+    "org.nuget.system.io.pipelines": "9.0.2",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
